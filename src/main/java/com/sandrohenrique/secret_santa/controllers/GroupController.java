@@ -2,6 +2,7 @@ package com.sandrohenrique.secret_santa.controllers;
 
 import com.sandrohenrique.secret_santa.domain.Group;
 import com.sandrohenrique.secret_santa.dtos.AddFriendDTO;
+import com.sandrohenrique.secret_santa.dtos.AddFriendsDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
 import com.sandrohenrique.secret_santa.services.GroupService;
@@ -35,9 +36,10 @@ public class GroupController {
         return new ResponseEntity<>(newGroup, HttpStatus.CREATED);
     }
 
-    @PostMapping(path = "addFriend")
-    public ResponseEntity<String> addFriendById(@RequestBody AddFriendDTO data) {
-        groupService.addFriendById(data);
-        return ResponseEntity.ok("Amigo adicionado com sucesso!");
+
+    @PostMapping(path = "addFriends")
+    public ResponseEntity<String> addFriendsById(@RequestBody AddFriendsDTO data) {
+        groupService.addFriendsById(data);
+        return ResponseEntity.ok("Amigos adicionados com sucesso!");
     }
 }
