@@ -1,4 +1,6 @@
 package com.sandrohenrique.secret_santa.dtos;
 
-public record GroupDTO(String name) {
+import java.util.List;
+
+public record GroupDTO(String name, List<Long> friendIds) {
 }
