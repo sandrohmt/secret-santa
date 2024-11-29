@@ -20,11 +20,12 @@ public class Group {
 
     private String name;
 
-    @ManyToMany
-    private List<Friend> friends;
+    @ElementCollection
+    private List<Long> friendIds;
 
     public Group(GroupDTO data) {
         this.name = data.name();
+        this.friendIds = data.friendIds();
     }
 
 }
