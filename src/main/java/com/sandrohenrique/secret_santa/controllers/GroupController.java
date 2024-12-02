@@ -1,7 +1,6 @@
 package com.sandrohenrique.secret_santa.controllers;
 
 import com.sandrohenrique.secret_santa.domain.Group;
-import com.sandrohenrique.secret_santa.dtos.AddFriendDTO;
 import com.sandrohenrique.secret_santa.dtos.AddFriendsDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
@@ -19,7 +18,7 @@ public class GroupController {
     private final GroupService groupService;
 
     @GetMapping(path = "by-id/{id}")
-    public ResponseEntity<GroupWithFriendsDTO> findGroupById(@PathVariable Long id) {
+    public ResponseEntity<GroupWithFriendsDTO> findGroupById(@PathVariable Long id) { // Mostrar o amigo sorteado tambem
         GroupWithFriendsDTO group = groupService.findGroupById(id);
         return new ResponseEntity<>(group, HttpStatus.OK);
     }
@@ -41,5 +40,11 @@ public class GroupController {
     public ResponseEntity<String> addFriendsById(@RequestBody AddFriendsDTO data) {
         groupService.addFriendsById(data);
         return ResponseEntity.ok("Amigos adicionados com sucesso!");
+    }
+
+    @PostMapping(path = "draw/{id}")
+    public ResponseEntity<String> drawFriends(@PathVariable Long id) {
+        groupService.drawFriends(id);
+        return ResponseEntity.ok("Amigos sorteados com sucesso!");
     }
 }
