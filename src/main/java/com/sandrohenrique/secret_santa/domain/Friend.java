@@ -25,8 +25,7 @@ public class Friend {
     @ElementCollection
     private List<String> wishlist;
 
-    @OneToOne
-    private Friend drawnFriend;
+    private Long drawnFriendId;
 
     public Friend(FriendDTO data) {
         this.firstName = data.firstName();
