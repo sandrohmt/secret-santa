@@ -5,6 +5,7 @@ import com.sandrohenrique.secret_santa.domain.Group;
 import com.sandrohenrique.secret_santa.dtos.AddFriendsDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
+import com.sandrohenrique.secret_santa.exceptions.*;
 import com.sandrohenrique.secret_santa.repositories.FriendRepository;
 import com.sandrohenrique.secret_santa.repositories.GroupRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class GroupService {
     public Group createGroup(GroupDTO data) {
         for (Long id : data.friendIds()) {
             if (friendRepository.findFriendById(id).isEmpty()) {
-                throw new RuntimeException("Usuário não encontrado!"); // Criar uma exceção
+                throw new EntityNotFoundException("Usuário não encontrado!"); // Criar uma exceção
             }
         }
         Group newGroup = new Group(data);
@@ -58,13 +59,18 @@ public class GroupService {
         for (Long friendId : data.friendIds()) {
             Optional<Friend> friendOpt = friendRepository.findFriendById(friendId);
 
-            if (groupOpt.isEmpty() || friendOpt.isEmpty()) { // Lançar exceção
-                throw new RuntimeException("Usuário ou grupo não encontrado!"); // Criar uma exceção
+            if (groupOpt.isEmpty()) { // Lançar exceção
+                throw new EntityNotFoundException("Grupo não encontrado!"); // Criar uma exceção
             }
+
+            if (friendOpt.isEmpty()) {
+                throw new EntityNotFoundException("Usuário não encontrado!"); // Criar uma exceção
+            }
+
             Group group = groupOpt.get();
 
             if (group.getFriendIds().contains(friendId)) { // Lançar exceção
-                throw new RuntimeException("Usuário já está nesse grupo!"); // Criar uma exceção
+                throw new UserAlreadyInGroupException("Usuário já está nesse grupo!"); // Criar uma exceção
             }
             group.getFriendIds().add(friendId);
             group.setDrawn(false);
@@ -76,14 +82,14 @@ public class GroupService {
         Group group = groupRepository.findGroupById(id).orElseThrow(RuntimeException::new); // Criar uma exceção
 
         if (group.isDrawn()) {
-            throw new RuntimeException("Grupo já foi sorteado!"); // Criar uma exceção
+            throw new GroupAlreadyDrawnException("Grupo já foi sorteado!"); // Criar uma exceção
         }
         List<Long> friendIds = group.getFriendIds();
 
         List<Friend> friends = friendRepository.findAllById(group.getFriendIds());
 
         if (friends.size() < 2) {
-            throw new RuntimeException("É necessário pelo menos 2 amigos para realizar o sorteio!"); // Criar uma exceção
+            throw new InsufficientFriendsException("É necessário pelo menos 2 amigos para realizar o sorteio!"); // Criar uma exceção
         }
 
         LinkedList<Long> availableFriends = new LinkedList<>(friendIds);
@@ -110,12 +116,11 @@ public class GroupService {
     }
 }
 
+// Procurar mais exceções
 // Temos um problema... se um amigo participa de dois sorteios diferentes ele nao consegue manter o drawnFriend dos dois, mantém do ultimo.
 // Fazer com que o sorteio seja cíclico
 // Encontrar amigo do grupo pelo id, entao precisa do id do grupo e do id do amigo tambem
 // Fazer um metodo Post para a pessoa saber quem ela tirou
-// Fazer todas as exceções necessarias
-// Lançar exceção com nome de grupo repetido
 // delete update friend
 // delete group
 // shuffles (tentar fazer com que tal usuario só consiga ver o dele)
