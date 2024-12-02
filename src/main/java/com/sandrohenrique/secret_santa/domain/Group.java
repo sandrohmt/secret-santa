@@ -24,6 +24,8 @@ public class Group {
     @ElementCollection
     private List<Long> friendIds;
 
+    private boolean isDrawn;
+
     public Group(GroupDTO data) {
         this.name = data.name();
         this.friendIds = data.friendIds();
