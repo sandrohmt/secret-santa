@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity(name = "groups")
 @Table(name = "groups")
@@ -22,7 +23,7 @@ public class Group {
     private String name;
 
     @ElementCollection
-    private List<Long> friendIds;
+    private Set<Long> friendIds;
 
     private boolean isDrawn;
 
