@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.*;
 
 import java.util.List;
 
@@ -18,12 +19,17 @@ public class Friend {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotEmpty(message = "The firstName cannot be empty")
     private String firstName;
 
+    @NotEmpty(message = "The lastName cannot be empty")
     private String lastName;
 
+    @NotEmpty(message = "The email cannot be empty")
+    @Email
     private String email;
 
+    @NotEmpty(message = "The wishlist cannot be empty")
     @ElementCollection
     private List<String> wishlist;
 
