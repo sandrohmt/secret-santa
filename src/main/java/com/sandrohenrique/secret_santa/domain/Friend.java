@@ -22,6 +22,8 @@ public class Friend {
 
     private String lastName;
 
+    private String email;
+
     @ElementCollection
     private List<String> wishlist;
 
@@ -30,6 +32,7 @@ public class Friend {
     public Friend(FriendDTO data) {
         this.firstName = data.firstName();
         this.lastName = data.lastName();
+        this.email = data.email();
         this.wishlist = data.wishlist();
     }
 }
