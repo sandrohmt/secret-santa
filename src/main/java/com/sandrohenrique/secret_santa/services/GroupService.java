@@ -110,7 +110,7 @@ public class GroupService {
                     Friend drawnFriend = friendRepository.findFriendById(friend.getDrawnFriendId()).get();
                     String drawnFriendName = drawnFriend.getFirstName() + " " + drawnFriend.getLastName();
                     List<String> drawnFriendWishlist = drawnFriend.getWishlist();
-                    emailService.sendTextEmail(friend.getEmail(), friendName,  group.getName(), drawnFriendName, drawnFriendWishlist); // deixar essa mensagem mais bonita. provavelmente fazer isso no emailService, nao aqui
+                    emailService.sendTextEmail(group.getName(), group.getEventLocation(), group.getEventDate(), group.getSpendingCap(), friend.getEmail(), friendName, drawnFriendName, drawnFriendWishlist); // deixar essa mensagem mais bonita. provavelmente fazer isso no emailService, nao aqui
                     break;
                 }
             }
@@ -124,9 +124,7 @@ public class GroupService {
     }
 }
 
-
-// fazer um get pra ver todos os amigos, ja ta feito, só precisa adicionar no controller mas to sem tempo agora
-// Botar mais detalhes no grupo pro email ficar melhor
+// desacoplar o envio de emails do drawFriends, ou sei la, ver algo no gpt pra resolver esse problema de varios parametros
 // delete friend (tem que remover do grupo tambem)
 // Temos um problema... se um amigo participa de dois sorteios diferentes ele nao consegue manter o drawnFriend dos dois, mantém do ultimo. talvez nao deixar o amigo participar de dois grupos ao mesmo tempo, mas quando sortear um grupo, remover o grupo, pra poder deixar amigos fazer mais de um sorteio
 // Fazer com que o sorteio seja cíclico
@@ -138,3 +136,4 @@ public class GroupService {
 // segurança?
 // testes
 // Tentar fazer com lista encadeada
+// Fazer um segundo draw pra ninguem tirar quem ja tirou no ano passado

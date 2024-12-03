@@ -6,6 +6,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -16,24 +17,31 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String sender;
 
-    public String sendTextEmail(String recipientEmail, String recipientName, String subject, String drawnFriendName, List<String> drawnFriendWishlist) {
+    public String sendTextEmail(String groupName, String eventLocation, LocalDate eventDate, Float spendingCap, String recipientEmail, String recipientName, String drawnFriendName, List<String> drawnFriendWishlist) {
 
         try {
             SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
             simpleMailMessage.setFrom(sender);
             simpleMailMessage.setTo(recipientEmail);
-            simpleMailMessage.setSubject(subject);
+            simpleMailMessage.setSubject(groupName);
             String message = """
                     Olá, %s!
                     
-                    Você foi convidado para participar de um amigo oculto!
+                    Você foi convidado para participar de um amigo oculto no grupo "s.
+                    
+                    Detalhes do evento:
+                    - Local: %s
+                    - Data: %s
+                    - Limite de gastos: R$ %.2f
+                    
                     Seu amigo oculto é: %s
                     
-                    Segue a lista de desejos dele:
+                    Segue a lista de desejos do seu amigo:
                     - %s
                     
                     Divirta-se e boas festas!
-                    """.formatted(recipientName, drawnFriendName, drawnFriendWishlist);
+        """.formatted(recipientName, groupName, eventLocation, eventDate, spendingCap, drawnFriendName, String.join("\n- ", drawnFriendWishlist));
+
             simpleMailMessage.setText(message);
             javaMailSender.send(simpleMailMessage);
             return "Email enviado";
