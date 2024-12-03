@@ -74,6 +74,7 @@ public class GroupService {
                 throw new UserAlreadyInGroupException("Usuário já está nesse grupo!");
             }
             group.getFriendIds().add(friendId);
+
         }
 
         group.setDrawn(false);
@@ -86,7 +87,7 @@ public class GroupService {
         if (group.isDrawn()) {
             throw new GroupAlreadyDrawnException("Grupo já foi sorteado!");
         }
-        List<Long> friendIds = group.getFriendIds();
+        Set<Long> friendIds = group.getFriendIds();
 
         List<Friend> friends = friendRepository.findAllById(group.getFriendIds());
 
@@ -123,11 +124,14 @@ public class GroupService {
     }
 }
 
-// Temos um problema... se um amigo participa de dois sorteios diferentes ele nao consegue manter o drawnFriend dos dois, mantém do ultimo.
+
+// fazer um get pra ver todos os amigos, ja ta feito, só precisa adicionar no controller mas to sem tempo agora
+// Botar mais detalhes no grupo pro email ficar melhor
+// delete friend (tem que remover do grupo tambem)
+// Temos um problema... se um amigo participa de dois sorteios diferentes ele nao consegue manter o drawnFriend dos dois, mantém do ultimo. talvez nao deixar o amigo participar de dois grupos ao mesmo tempo, mas quando sortear um grupo, remover o grupo, pra poder deixar amigos fazer mais de um sorteio
 // Fazer com que o sorteio seja cíclico
 // Encontrar amigo do grupo pelo id, entao precisa do id do grupo e do id do amigo tambem
 // Fazer um metodo Post para a pessoa saber quem ela tirou
-// delete friend
 // update friend
 // delete group
 // shuffles (tentar fazer com que tal usuario só consiga ver o dele)
