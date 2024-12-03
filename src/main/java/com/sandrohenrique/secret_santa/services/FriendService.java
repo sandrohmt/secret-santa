@@ -21,7 +21,7 @@ public class FriendService {
 
     public Friend createFriend(FriendDTO data) {
         Friend newFriend = new Friend(data);
-        List<Friend> friends = this.friendRepository.findAll();
+        List<Friend> friends = getAllFriends(); // Testar isso em casa
         for (Friend friend : friends) {
             if (newFriend.getEmail().equals(friend.getEmail())) {
                 throw new UserAlreadyInGroupException("Usuário já cadastrado com esse email!"); // Talvez fazer isso de outra forma, porque ele precisa percorrer a lista inteira pra fazer essa verificação
@@ -31,4 +31,7 @@ public class FriendService {
         return newFriend;
     }
 
+    public List<Friend> getAllFriends() {
+        return this.friendRepository.findAll(); // Testar isso em casa
+    }
 }
