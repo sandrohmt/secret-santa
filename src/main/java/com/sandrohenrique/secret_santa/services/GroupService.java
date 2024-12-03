@@ -19,6 +19,8 @@ public class GroupService {
 
     private final GroupRepository groupRepository;
     private final FriendRepository friendRepository;
+    private final EmailService emailService;
+
 
     public void saveGroup(Group group) {
         this.groupRepository.save(group);
@@ -36,7 +38,7 @@ public class GroupService {
     }
 
     public GroupWithFriendsDTO findGroupById(Long id) {
-        Group group = this.groupRepository.findGroupById(id).orElseThrow(RuntimeException::new);// Criar uma exceção pra isso
+        Group group = this.groupRepository.findGroupById(id).orElseThrow(() -> new EntityNotFoundException("Grupo não encontrado"));
 
         List<Friend> friends = friendRepository.findAllById(group.getFriendIds());
 
@@ -45,7 +47,7 @@ public class GroupService {
 
 
     public GroupWithFriendsDTO findGroupByName(String name) {
-        Group group = this.groupRepository.findGroupByName(name).orElseThrow(RuntimeException::new); // Criar uma exceção
+        Group group = this.groupRepository.findGroupByName(name).orElseThrow(() -> new EntityNotFoundException("Grupo não encontrado"));
 
         List<Friend> friends = friendRepository.findAllById(group.getFriendIds());
 
@@ -54,42 +56,42 @@ public class GroupService {
     }
 
     public void addFriendsById(AddFriendsDTO data) {
-        Optional<Group> groupOpt = groupRepository.findGroupById(data.groupId()); // Talvez fazer igual aos outros métodos orElseThrow
+        Optional<Group> groupOpt = groupRepository.findGroupById(data.groupId());
+
+        if (groupOpt.isEmpty()) { // Lançar exceção
+            throw new EntityNotFoundException("Grupo não encontrado!");
+        }
+
+        Group group = groupOpt.get();
 
         for (Long friendId : data.friendIds()) {
             Optional<Friend> friendOpt = friendRepository.findFriendById(friendId);
-
-            if (groupOpt.isEmpty()) { // Lançar exceção
-                throw new EntityNotFoundException("Grupo não encontrado!"); // Criar uma exceção
-            }
-
             if (friendOpt.isEmpty()) {
-                throw new EntityNotFoundException("Usuário não encontrado!"); // Criar uma exceção
+                throw new EntityNotFoundException("Usuário não encontrado!");
             }
 
-            Group group = groupOpt.get();
-
-            if (group.getFriendIds().contains(friendId)) { // Lançar exceção
-                throw new UserAlreadyInGroupException("Usuário já está nesse grupo!"); // Criar uma exceção
+            if (group.getFriendIds().contains(friendId)) {
+                throw new UserAlreadyInGroupException("Usuário já está nesse grupo!");
             }
             group.getFriendIds().add(friendId);
-            group.setDrawn(false);
-            saveGroup(group);
         }
+
+        group.setDrawn(false);
+        saveGroup(group);
     }
 
     public void drawFriends(Long id) {
-        Group group = groupRepository.findGroupById(id).orElseThrow(RuntimeException::new); // Criar uma exceção
+        Group group = groupRepository.findGroupById(id).orElseThrow(() -> new EntityNotFoundException("Grupo não encontrado"));
 
         if (group.isDrawn()) {
-            throw new GroupAlreadyDrawnException("Grupo já foi sorteado!"); // Criar uma exceção
+            throw new GroupAlreadyDrawnException("Grupo já foi sorteado!");
         }
         List<Long> friendIds = group.getFriendIds();
 
         List<Friend> friends = friendRepository.findAllById(group.getFriendIds());
 
         if (friends.size() < 2) {
-            throw new InsufficientFriendsException("É necessário pelo menos 2 amigos para realizar o sorteio!"); // Criar uma exceção
+            throw new InsufficientFriendsException("É necessário pelo menos 2 amigos para realizar o sorteio!");
         }
 
         LinkedList<Long> availableFriends = new LinkedList<>(friendIds);
@@ -103,28 +105,29 @@ public class GroupService {
                 if (!drawnId.equals(friend.getId())) {
                     friend.setDrawnFriendId(drawnId);
                     iterator.remove();
+                    String drawnFriendName = friendRepository.findFriendById(friend.getDrawnFriendId()).get().getFirstName();
+                    emailService.sendTextEmail(friend.getEmail(), "Amigo oculto " + group.getName(), drawnFriendName); // deixar essa mensagem mais bonita. provavelmente fazer isso no emailService, nao aqui
                     break;
                 }
             }
-
         }
 
         friendRepository.saveAll(friends);
 
         group.setDrawn(true);
         saveGroup(group);
+
     }
 }
 
-// Procurar mais exceções
 // Temos um problema... se um amigo participa de dois sorteios diferentes ele nao consegue manter o drawnFriend dos dois, mantém do ultimo.
 // Fazer com que o sorteio seja cíclico
 // Encontrar amigo do grupo pelo id, entao precisa do id do grupo e do id do amigo tambem
 // Fazer um metodo Post para a pessoa saber quem ela tirou
-// delete update friend
+// delete friend
+// update friend
 // delete group
 // shuffles (tentar fazer com que tal usuario só consiga ver o dele)
-// talvez disparar emails
 // segurança?
 // testes
 // Tentar fazer com lista encadeada
