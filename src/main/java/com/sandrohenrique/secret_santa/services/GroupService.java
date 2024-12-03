@@ -105,8 +105,11 @@ public class GroupService {
                 if (!drawnId.equals(friend.getId())) {
                     friend.setDrawnFriendId(drawnId);
                     iterator.remove();
-                    String drawnFriendName = friendRepository.findFriendById(friend.getDrawnFriendId()).get().getFirstName();
-                    emailService.sendTextEmail(friend.getEmail(), "Amigo oculto " + group.getName(), drawnFriendName); // deixar essa mensagem mais bonita. provavelmente fazer isso no emailService, nao aqui
+                    String friendName = friend.getFirstName() + " " + friend.getLastName();
+                    Friend drawnFriend = friendRepository.findFriendById(friend.getDrawnFriendId()).get();
+                    String drawnFriendName = drawnFriend.getFirstName() + " " + drawnFriend.getLastName();
+                    List<String> drawnFriendWishlist = drawnFriend.getWishlist();
+                    emailService.sendTextEmail(friend.getEmail(), friendName,  group.getName(), drawnFriendName, drawnFriendWishlist); // deixar essa mensagem mais bonita. provavelmente fazer isso no emailService, nao aqui
                     break;
                 }
             }
