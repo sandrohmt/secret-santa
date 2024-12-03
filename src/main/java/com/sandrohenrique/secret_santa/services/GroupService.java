@@ -143,16 +143,12 @@ public class GroupService {
 // - getAllUsers()
 // - Enviar email pra todo mundo e ver como que ta
 
-// desacoplar o envio de emails do drawFriends, ou sei la, ver algo no gpt pra resolver esse problema de varios parametros
-// delete friend (tem que remover do grupo tambem)
+// delete friend (tem que remover do grupo tambem), sempre que o grupo mudar de algum jeito tem que colocar o isDrawn para false
 // Temos um problema... se um amigo participa de dois sorteios diferentes ele nao consegue manter o drawnFriend dos dois, mantém do ultimo. talvez nao deixar o amigo participar de dois grupos ao mesmo tempo, mas quando sortear um grupo, remover o grupo, pra poder deixar amigos fazer mais de um sorteio
 // Fazer com que o sorteio seja cíclico
-// Encontrar amigo do grupo pelo id, entao precisa do id do grupo e do id do amigo tambem
-// Fazer um metodo Post para a pessoa saber quem ela tirou
 // update friend
 // delete group
-// shuffles (tentar fazer com que tal usuario só consiga ver o dele)
 // segurança?
 // testes
 // Tentar fazer com lista encadeada
-// Fazer um segundo draw pra ninguem tirar quem ja tirou no ano passado
+// talvez fazer um segundo draw pra ninguem tirar quem ja tirou no ano passado
