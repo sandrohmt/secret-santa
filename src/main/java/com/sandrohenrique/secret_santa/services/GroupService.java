@@ -11,6 +11,7 @@ import com.sandrohenrique.secret_santa.repositories.GroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -106,11 +107,7 @@ public class GroupService {
                 if (!drawnId.equals(friend.getId())) {
                     friend.setDrawnFriendId(drawnId);
                     iterator.remove();
-                    String friendName = friend.getFirstName() + " " + friend.getLastName();
-                    Friend drawnFriend = friendRepository.findFriendById(friend.getDrawnFriendId()).get();
-                    String drawnFriendName = drawnFriend.getFirstName() + " " + drawnFriend.getLastName();
-                    List<String> drawnFriendWishlist = drawnFriend.getWishlist();
-                    emailService.sendTextEmail(group.getName(), group.getEventLocation(), group.getEventDate(), group.getSpendingCap(), friend.getEmail(), friendName, drawnFriendName, drawnFriendWishlist); // deixar essa mensagem mais bonita. provavelmente fazer isso no emailService, nao aqui
+                    sendEmailsToFriends(group, friend);
                     break;
                 }
             }
@@ -122,7 +119,29 @@ public class GroupService {
         saveGroup(group);
 
     }
+
+    public void sendEmailsToFriends(Group group, Friend friend) {
+        String groupName = group.getName();
+        String eventLocation = group.getEventLocation();
+        LocalDate eventDate = group.getEventDate();
+        Float spendingCap = group.getSpendingCap();
+
+        String friendName = friend.getFirstName() + " " + friend.getLastName();
+        String friendEmail = friend.getEmail();
+
+        Friend drawnFriend = friendRepository.findFriendById(friend.getDrawnFriendId()).get();
+        String drawnFriendName = drawnFriend.getFirstName() + " " + drawnFriend.getLastName();
+        List<String> drawnFriendWishlist = drawnFriend.getWishlist();
+
+        emailService.sendTextEmail(groupName, eventLocation, eventDate, spendingCap, friendEmail, friendName, drawnFriendName, drawnFriendWishlist);
+    }
 }
+
+
+
+// coisas pra testar quando chegar em casa
+// - getAllUsers()
+// - Enviar email pra todo mundo e ver como que ta
 
 // desacoplar o envio de emails do drawFriends, ou sei la, ver algo no gpt pra resolver esse problema de varios parametros
 // delete friend (tem que remover do grupo tambem)
