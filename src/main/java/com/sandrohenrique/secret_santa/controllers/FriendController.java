@@ -23,11 +23,17 @@ public class FriendController {
         return new ResponseEntity<>(friends, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping(path = "createFriend")
     public ResponseEntity<Friend> createFriend(@RequestBody FriendDTO friend) {
         Friend newFriend = friendService.createFriend(friend);
         return new ResponseEntity<>(newFriend, HttpStatus.CREATED);
     }
 
-
+    @PostMapping(path = "createFriends")
+    public ResponseEntity<List<FriendDTO>> createFriends(@RequestBody List<FriendDTO> friends) {
+        for (FriendDTO friend: friends) {
+            Friend newFriend = friendService.createFriend(friend);
+        }
+        return new ResponseEntity<>(friends, HttpStatus.CREATED);
+    }
 }
