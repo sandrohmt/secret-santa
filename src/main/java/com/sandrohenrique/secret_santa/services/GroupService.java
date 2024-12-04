@@ -8,6 +8,7 @@ import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
 import com.sandrohenrique.secret_santa.exceptions.*;
 import com.sandrohenrique.secret_santa.repositories.FriendRepository;
 import com.sandrohenrique.secret_santa.repositories.GroupRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +44,7 @@ public class GroupService {
 
         List<Friend> friends = friendRepository.findAllById(group.getFriendIds());
 
-        return new GroupWithFriendsDTO(group.getId(), group.getName(), friends);
+        return new GroupWithFriendsDTO(group.getId(), group.getName(), group.getEventLocation(), group.getEventDate(), group.getSpendingCap(), friends);
     }
 
 
@@ -52,7 +53,7 @@ public class GroupService {
 
         List<Friend> friends = friendRepository.findAllById(group.getFriendIds());
 
-        return new GroupWithFriendsDTO(group.getId(), group.getName(), friends);
+        return new GroupWithFriendsDTO(group.getId(), group.getName(), group.getEventLocation(), group.getEventDate(), group.getSpendingCap(), friends);
 
     }
 
@@ -131,8 +132,6 @@ public class GroupService {
     }
 }
 
-// Transactional talvez
-// possibilitar adicionar varios amigos de uma vez
 // fazer um redraw
 // delete friend (tem que remover do grupo tambem), sempre que o grupo mudar de algum jeito tem que colocar o isDrawn para false
 // Temos um problema... se um amigo participa de dois sorteios diferentes ele nao consegue manter o drawnFriend dos dois, mantém do ultimo. talvez nao deixar o amigo participar de dois grupos ao mesmo tempo, mas quando sortear um grupo, remover o grupo, pra poder deixar amigos fazer mais de um sorteio
