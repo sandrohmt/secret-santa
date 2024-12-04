@@ -43,8 +43,9 @@ public class GroupController {
     }
 
     @PostMapping(path = "draw/{id}")
-    public ResponseEntity<String> drawFriends(@PathVariable Long id) {
+    public ResponseEntity<GroupWithFriendsDTO> drawFriends(@PathVariable Long id) {
+        GroupWithFriendsDTO group = groupService.findGroupById(id);
         groupService.drawFriends(id);
-        return ResponseEntity.ok("Amigos sorteados com sucesso!");
+        return new ResponseEntity<>(group, HttpStatus.OK);
     }
 }
