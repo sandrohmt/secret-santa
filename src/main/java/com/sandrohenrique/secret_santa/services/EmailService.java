@@ -16,7 +16,7 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String sender;
 
-    public String sendEmail(String groupName, String eventLocation, String eventDate, Float spendingCap, String recipientEmail, String recipientName, String drawnFriendName, List<String> drawnFriendWishlist) {
+    public void sendEmail(String groupName, String eventLocation, String eventDate, Float spendingCap, String recipientEmail, String recipientName, String drawnFriendName, List<String> drawnFriendWishlist) {
 
         try {
             SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
@@ -50,9 +50,8 @@ Divirta-se e boas festas!
 
             simpleMailMessage.setText(message);
             javaMailSender.send(simpleMailMessage);
-            return "Email enviado";
         } catch (Exception exception) {
-            return "Erro ao tentar enviar email!" + exception.getMessage();
+            exception.getMessage();
         }
     }
 }
