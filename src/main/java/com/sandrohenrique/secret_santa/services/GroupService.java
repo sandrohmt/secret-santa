@@ -82,6 +82,7 @@ public class GroupService {
         saveGroup(group);
     }
 
+    @Transactional
     public void drawFriends(Long id) {
         Group group = groupRepository.findGroupById(id).orElseThrow(() -> new EntityNotFoundException("Grupo não encontrado"));
 
