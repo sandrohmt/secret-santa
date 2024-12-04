@@ -3,6 +3,7 @@ package com.sandrohenrique.secret_santa.domain;
 import com.sandrohenrique.secret_santa.dtos.GroupDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,10 +27,10 @@ public class Group {
     @NotEmpty(message = "The eventLocation cannot be empty")
     private String eventLocation;
 
-    @NotEmpty(message = "The eventDate cannot be empty")
+    @NotNull(message = "The eventDate cannot be null")
     private LocalDate eventDate;
 
-    @NotEmpty(message = "The spendingCap cannot be empty")
+    @NotNull(message = "The spendingCap cannot be null")
     private Float spendingCap;
 
     @ElementCollection

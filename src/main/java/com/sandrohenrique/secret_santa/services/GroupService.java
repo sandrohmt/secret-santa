@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -123,7 +124,7 @@ public class GroupService {
     public void sendEmailsToFriends(Group group, Friend friend) {
         String groupName = group.getName();
         String eventLocation = group.getEventLocation();
-        LocalDate eventDate = group.getEventDate();
+        String eventDate = group.getEventDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         Float spendingCap = group.getSpendingCap();
 
         String friendName = friend.getFirstName() + " " + friend.getLastName();
@@ -133,16 +134,13 @@ public class GroupService {
         String drawnFriendName = drawnFriend.getFirstName() + " " + drawnFriend.getLastName();
         List<String> drawnFriendWishlist = drawnFriend.getWishlist();
 
-        emailService.sendTextEmail(groupName, eventLocation, eventDate, spendingCap, friendEmail, friendName, drawnFriendName, drawnFriendWishlist);
+        emailService.sendEmail(groupName, eventLocation, eventDate, spendingCap, friendEmail, friendName, drawnFriendName, drawnFriendWishlist);
     }
 }
 
 
 
-// coisas pra testar quando chegar em casa
-// - getAllUsers()
-// - Enviar email pra todo mundo e ver como que ta
-
+// possibilitar adicionar varios amigos de uma vez
 // fazer um redraw
 // delete friend (tem que remover do grupo tambem), sempre que o grupo mudar de algum jeito tem que colocar o isDrawn para false
 // Temos um problema... se um amigo participa de dois sorteios diferentes ele nao consegue manter o drawnFriend dos dois, mantém do ultimo. talvez nao deixar o amigo participar de dois grupos ao mesmo tempo, mas quando sortear um grupo, remover o grupo, pra poder deixar amigos fazer mais de um sorteio
