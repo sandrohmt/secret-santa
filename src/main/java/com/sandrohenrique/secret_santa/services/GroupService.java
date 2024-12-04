@@ -11,7 +11,6 @@ import com.sandrohenrique.secret_santa.repositories.GroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -89,7 +88,6 @@ public class GroupService {
         if (group.isDrawn()) {
             throw new GroupAlreadyDrawnException("Grupo já foi sorteado!");
         }
-        Set<Long> friendIds = group.getFriendIds();
 
         List<Friend> friends = friendRepository.findAllById(group.getFriendIds());
 
@@ -97,28 +95,22 @@ public class GroupService {
             throw new InsufficientFriendsException("É necessário pelo menos 2 amigos para realizar o sorteio!");
         }
 
-        LinkedList<Long> availableFriends = new LinkedList<>(friendIds);
-        Collections.shuffle(availableFriends);
+        LinkedList<Friend> shuffledFriends = new LinkedList<>(friends);
+        Collections.shuffle(shuffledFriends);
 
-
-        for (Friend friend : friends) {
-            Iterator<Long> iterator = availableFriends.iterator();
-            while(iterator.hasNext()) {
-                Long drawnId = iterator.next();
-                if (!drawnId.equals(friend.getId())) {
-                    friend.setDrawnFriendId(drawnId);
-                    iterator.remove();
-                    sendEmailsToFriends(group, friend);
-                    break;
-                }
-            }
+        for (int i = 0; i < shuffledFriends.size(); i++) {
+            Friend current = shuffledFriends.get(i);
+            Friend next = (i + 1 < shuffledFriends.size())
+                    ? shuffledFriends.get(i + 1)
+                    : shuffledFriends.getFirst();
+            current.setDrawnFriendId(next.getId());
+            sendEmailsToFriends(group, current);
         }
 
         friendRepository.saveAll(friends);
 
         group.setDrawn(true);
         saveGroup(group);
-
     }
 
     public void sendEmailsToFriends(Group group, Friend friend) {
@@ -138,13 +130,11 @@ public class GroupService {
     }
 }
 
-
-
+// Transactional talvez
 // possibilitar adicionar varios amigos de uma vez
 // fazer um redraw
 // delete friend (tem que remover do grupo tambem), sempre que o grupo mudar de algum jeito tem que colocar o isDrawn para false
 // Temos um problema... se um amigo participa de dois sorteios diferentes ele nao consegue manter o drawnFriend dos dois, mantém do ultimo. talvez nao deixar o amigo participar de dois grupos ao mesmo tempo, mas quando sortear um grupo, remover o grupo, pra poder deixar amigos fazer mais de um sorteio
-// Fazer com que o sorteio seja cíclico
 // update friend
 // delete group
 // segurança?
