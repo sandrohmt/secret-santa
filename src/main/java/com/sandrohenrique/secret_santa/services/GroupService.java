@@ -134,24 +134,19 @@ public class GroupService {
     }
 }
 
+// Método delete nao ta deletando mano, botar o group pra ser retornado pra verificar as deleções
+// Talvez os metodos com plural devem ser feitos no singular tambem
 // Talvez fazer um findGroup sem o DTO, pra repetir menos as exceções
 // addFriends Precisa de pelo menos um item na lista (Nullable?)
 // findByName provavelmente deve retornar mais de 1 grupo
 // Não da pra pesquisar por nomes de grupo com espaço
-// Talvez os metodos com plural devem ser feitos no singular tambem
-// Método delete nao ta deletando mano, botar o group pra ser retornado pra verificar as deleções
 // Acho que nao precisa de toda vez que chamar o find alguma coisa em algum metodo, lançar excecao, pq ja tem a exceçao dentro dos metodos find (testar isso depois), o problema é que o metodo dentro do service retorna um DTO nao o Group normal, isso pode dar uma dor de cabeça pra resolver
 // Acho que deveria renomear o GroupFriendDTO, ta mt parecido com o GroupWithFriends
 // dar uma atenção na mensagem das exceções
-// olhar o ControllerExceptionHandler para adicionar as novas exceções
-// ver direitinho a questao de usar ou o repository ou os metodos do proprio service
 // fazer um redraw
-// delete friend (tem que remover do grupo tambem), sempre que o grupo mudar de algum jeito tem que colocar o isDrawn para false
 // Temos um problema... se um amigo participa de dois sorteios diferentes ele nao consegue manter o drawnFriend dos dois, mantém do ultimo. talvez nao deixar o amigo participar de dois grupos ao mesmo tempo, mas quando sortear um grupo, remover o grupo, pra poder deixar amigos fazer mais de um sorteio
 // update friend
 // delete group
 // segurança?
 // testes
-// Tentar fazer com lista encadeada
-// talvez fazer um segundo draw pra ninguem tirar quem ja tirou no ano passado
 // Tentar fazer arquitetura limpa no EmailService
