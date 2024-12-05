@@ -1,10 +1,7 @@
 package com.sandrohenrique.secret_santa.infra;
 
 import com.sandrohenrique.secret_santa.dtos.ExceptionDTO;
-import com.sandrohenrique.secret_santa.exceptions.EntityNotFoundException;
-import com.sandrohenrique.secret_santa.exceptions.GroupAlreadyDrawnException;
-import com.sandrohenrique.secret_santa.exceptions.InsufficientFriendsException;
-import com.sandrohenrique.secret_santa.exceptions.FriendAlreadyInGroupException;
+import com.sandrohenrique.secret_santa.exceptions.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -36,8 +33,8 @@ public class ControllerExceptionHandler {
         return ResponseEntity.badRequest().body(response);
     }
 
-    @ExceptionHandler(FriendAlreadyInGroupException.class)
-    public ResponseEntity<ExceptionDTO> FriendAlreadyInGroupException(FriendAlreadyInGroupException exception) {
+    @ExceptionHandler(FriendNotInGroupException.class)
+    public ResponseEntity<ExceptionDTO> handlefriendNotInGroupException(FriendNotInGroupException exception) {
         ExceptionDTO response = new ExceptionDTO(exception.getMessage(), "400");
         return ResponseEntity.badRequest().body(response);
     }
