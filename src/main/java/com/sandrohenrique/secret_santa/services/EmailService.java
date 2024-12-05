@@ -55,3 +55,5 @@ Divirta-se e boas festas!
         }
     }
 }
+
+ // Dar exception se o email enviado for invalido
