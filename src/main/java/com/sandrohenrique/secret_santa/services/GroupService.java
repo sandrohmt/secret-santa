@@ -147,3 +147,4 @@ public class GroupService {
 // segurança?
 // testes
 // Tentar fazer arquitetura limpa no EmailService
+// Pesquisar stateful e stateless, csrf, bean e migrations

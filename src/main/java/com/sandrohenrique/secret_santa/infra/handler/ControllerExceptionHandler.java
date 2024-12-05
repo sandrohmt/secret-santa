@@ -1,4 +1,4 @@
-package com.sandrohenrique.secret_santa.infra;
+package com.sandrohenrique.secret_santa.infra.handler;
 
 import com.sandrohenrique.secret_santa.dtos.ExceptionDTO;
 import com.sandrohenrique.secret_santa.exceptions.*;
