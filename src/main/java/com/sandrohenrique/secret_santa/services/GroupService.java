@@ -22,16 +22,21 @@ public class GroupService {
     private final FriendService friendService;
     private final EmailService emailService;
 
-    public GroupWithFriendsDTO findGroupById(Long id) {
-        Group group = this.groupRepository.findGroupById(id).orElseThrow(() -> new EntityNotFoundException("Grupo não encontrado"));
+    public Group findGroupById(Long id) {
+        return this.groupRepository.findGroupById(id).orElseThrow(() -> new EntityNotFoundException("Grupo com ID fornecido não existe!"));
+    }
+
+
+    public GroupWithFriendsDTO findGroupWIthFriendsById(Long id) {
+        Group group = this.groupRepository.findGroupById(id).orElseThrow(() -> new EntityNotFoundException("Grupo com ID fornecido não existe!"));
 
         List<Friend> friends = friendService.findAllFriendsById(group.getFriendIds());
 
         return new GroupWithFriendsDTO(group.getId(), group.getName(), group.getEventLocation(), group.getEventDate(), group.getSpendingCap(), friends);
     }
 
-    public GroupWithFriendsDTO findGroupByName(String name) {
-        Group group = this.groupRepository.findGroupByName(name).orElseThrow(() -> new EntityNotFoundException("Grupo não encontrado"));
+    public GroupWithFriendsDTO findGroupWithFriendsByName(String name) {
+        Group group = this.groupRepository.findGroupByName(name).orElseThrow(() -> new EntityNotFoundException("Grupo com nome fornecido não existe!"));
 
         List<Friend> friends = friendService.findAllFriendsById(group.getFriendIds());
 
@@ -51,19 +56,17 @@ public class GroupService {
     }
 
     public void addFriendsById(GroupFriendDTO data) {
-        Optional<Group> groupOpt = groupRepository.findGroupById(data.groupId());
+        Group group = findGroupById(data.groupId());
 
-        if (groupOpt.isEmpty()) { // Lançar exceção
-            throw new EntityNotFoundException("Grupo não encontrado!");
+        if (data.friendIds().isEmpty()) {
+            throw new InsufficientFriendsException("Adicione pelo menos um amigo!");
         }
-
-        Group group = groupOpt.get();
 
         for (Long friendId : data.friendIds()) {
             friendService.findFriendById(friendId);
 
             if (group.getFriendIds().contains(friendId)) {
-                throw new FriendAlreadyInGroupException("Amigo já está nesse grupo!");
+                throw new FriendAlreadyInGroupException("Amigo já pertence a esse grupo!");
             }
             group.getFriendIds().add(friendId);
 
@@ -74,7 +77,7 @@ public class GroupService {
     }
 
     public void deleteFriendsInGroup(GroupFriendDTO data) {
-        Group group = groupRepository.findGroupById(data.groupId()).orElseThrow();
+        Group group = findGroupById(data.groupId()); // olhar depois
         Set<Long> idsToBeDeleted = data.friendIds();
         for (Long id: idsToBeDeleted) {
             if (!group.getFriendIds().contains(id)) {
@@ -87,7 +90,7 @@ public class GroupService {
 
     @Transactional
     public void drawFriends(Long id) {
-        Group group = groupRepository.findGroupById(id).orElseThrow(() -> new EntityNotFoundException("Grupo não encontrado"));
+        Group group = findGroupById(id);
 
         if (group.isDrawn()) {
             throw new GroupAlreadyDrawnException("Grupo já foi sorteado!");
@@ -134,17 +137,11 @@ public class GroupService {
     }
 }
 
-// Método delete nao ta deletando mano, botar o group pra ser retornado pra verificar as deleções
+// Um amigo só pode participar de um grupo, talvez depois que fizer o draw deletar o grupo e tirar o drawnFriendId de todos os amigos
 // Talvez os metodos com plural devem ser feitos no singular tambem
-// Talvez fazer um findGroup sem o DTO, pra repetir menos as exceções
-// addFriends Precisa de pelo menos um item na lista (Nullable?)
 // findByName provavelmente deve retornar mais de 1 grupo
-// Não da pra pesquisar por nomes de grupo com espaço
-// Acho que nao precisa de toda vez que chamar o find alguma coisa em algum metodo, lançar excecao, pq ja tem a exceçao dentro dos metodos find (testar isso depois), o problema é que o metodo dentro do service retorna um DTO nao o Group normal, isso pode dar uma dor de cabeça pra resolver
 // Acho que deveria renomear o GroupFriendDTO, ta mt parecido com o GroupWithFriends
-// dar uma atenção na mensagem das exceções
 // fazer um redraw
-// Temos um problema... se um amigo participa de dois sorteios diferentes ele nao consegue manter o drawnFriend dos dois, mantém do ultimo. talvez nao deixar o amigo participar de dois grupos ao mesmo tempo, mas quando sortear um grupo, remover o grupo, pra poder deixar amigos fazer mais de um sorteio
 // update friend
 // delete group
 // segurança?
