@@ -2,11 +2,10 @@ package com.sandrohenrique.secret_santa.services;
 
 import com.sandrohenrique.secret_santa.domain.Friend;
 import com.sandrohenrique.secret_santa.domain.Group;
-import com.sandrohenrique.secret_santa.dtos.AddFriendsDTO;
+import com.sandrohenrique.secret_santa.dtos.GroupFriendDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
 import com.sandrohenrique.secret_santa.exceptions.*;
-import com.sandrohenrique.secret_santa.repositories.FriendRepository;
 import com.sandrohenrique.secret_santa.repositories.GroupRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -51,25 +50,7 @@ public class GroupService {
         return newGroup;
     }
 
-    public GroupWithFriendsDTO findGroupById(Long id) {
-        Group group = this.groupRepository.findGroupById(id).orElseThrow(() -> new EntityNotFoundException("Grupo não encontrado"));
-
-        List<Friend> friends = friendRepository.findAllById(group.getFriendIds());
-
-        return new GroupWithFriendsDTO(group.getId(), group.getName(), group.getEventLocation(), group.getEventDate(), group.getSpendingCap(), friends);
-    }
-
-
-    public GroupWithFriendsDTO findGroupByName(String name) {
-        Group group = this.groupRepository.findGroupByName(name).orElseThrow(() -> new EntityNotFoundException("Grupo não encontrado"));
-
-        List<Friend> friends = friendRepository.findAllById(group.getFriendIds());
-
-        return new GroupWithFriendsDTO(group.getId(), group.getName(), group.getEventLocation(), group.getEventDate(), group.getSpendingCap(), friends);
-
-    }
-
-    public void addFriendsById(AddFriendsDTO data) {
+    public void addFriendsById(GroupFriendDTO data) {
         Optional<Group> groupOpt = groupRepository.findGroupById(data.groupId());
 
         if (groupOpt.isEmpty()) { // Lançar exceção
