@@ -27,19 +27,39 @@ public class FriendService {
         this.friendRepository.save(friend);
     }
 
+    public List<Friend> getAllFriends() {
+        return this.friendRepository.findAll();
+    }
+
     public Friend createFriend(FriendDTO data) {
         Friend newFriend = new Friend(data);
-        List<Friend> friends = getAllFriends(); // Testar isso em casa
+        List<Friend> friends = getAllFriends();
         for (Friend friend : friends) {
             if (newFriend.getEmail().equals(friend.getEmail())) {
-                throw new UserAlreadyInGroupException("Usuário já cadastrado com esse email!"); // Talvez fazer isso de outra forma, porque ele precisa percorrer a lista inteira pra fazer essa verificação
+                throw new FriendAlreadyInGroupException("Usuário já cadastrado com esse email!");
             }
         }
         saveUser(newFriend);
         return newFriend;
     }
 
-    public List<Friend> getAllFriends() {
-        return this.friendRepository.findAll(); // Testar isso em casa
+    public Friend findFriendById(Long id) {
+        return this.friendRepository.findFriendById(id).orElseThrow(() -> new EntityNotFoundException("Amigo com ID fornecido não encontrado!"));
     }
+
+    public List<Friend> findAllFriendsById(Set<Long> friends) {
+        for (Long id: friends) {
+            findFriendById(id);
+        }
+
+        return friendRepository.findAllById(friends);
+    }
+
+//    public void deleteFriends(GroupFriendDTO data) {
+//        groupService.deleteFriendsInGroup(data);
+//        for (Long friendId: data.friendIds()) {
+//            this.friendRepository.deleteAll(friendRepository.findFriendById(friendId).get());
+//        }
+//    }
+
 }
