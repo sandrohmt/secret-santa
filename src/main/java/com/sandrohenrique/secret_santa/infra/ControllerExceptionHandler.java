@@ -4,8 +4,7 @@ import com.sandrohenrique.secret_santa.dtos.ExceptionDTO;
 import com.sandrohenrique.secret_santa.exceptions.EntityNotFoundException;
 import com.sandrohenrique.secret_santa.exceptions.GroupAlreadyDrawnException;
 import com.sandrohenrique.secret_santa.exceptions.InsufficientFriendsException;
-import com.sandrohenrique.secret_santa.exceptions.UserAlreadyInGroupException;
-import org.springframework.dao.DataIntegrityViolationException;
+import com.sandrohenrique.secret_santa.exceptions.FriendAlreadyInGroupException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -19,8 +18,8 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(404).body(response);
     }
 
-    @ExceptionHandler(UserAlreadyInGroupException.class)
-    public ResponseEntity<ExceptionDTO> handleUserAlreadyInGroup(UserAlreadyInGroupException exception) {
+    @ExceptionHandler(FriendAlreadyInGroupException.class)
+    public ResponseEntity<ExceptionDTO> handleUserAlreadyInGroup(FriendAlreadyInGroupException exception) {
         ExceptionDTO response = new ExceptionDTO(exception.getMessage(), "400");
         return ResponseEntity.badRequest().body(response);
     }
@@ -33,6 +32,12 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(InsufficientFriendsException.class)
     public ResponseEntity<ExceptionDTO> handleInsufficientFriends(InsufficientFriendsException exception) {
+        ExceptionDTO response = new ExceptionDTO(exception.getMessage(), "400");
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(FriendAlreadyInGroupException.class)
+    public ResponseEntity<ExceptionDTO> FriendAlreadyInGroupException(FriendAlreadyInGroupException exception) {
         ExceptionDTO response = new ExceptionDTO(exception.getMessage(), "400");
         return ResponseEntity.badRequest().body(response);
     }

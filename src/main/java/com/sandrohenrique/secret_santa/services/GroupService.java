@@ -63,7 +63,7 @@ public class GroupService {
             friendService.findFriendById(friendId);
 
             if (group.getFriendIds().contains(friendId)) {
-                throw new UserAlreadyInGroupException("Usuário já está nesse grupo!");
+                throw new FriendAlreadyInGroupException("Amigo já está nesse grupo!");
             }
             group.getFriendIds().add(friendId);
 
@@ -71,6 +71,18 @@ public class GroupService {
 
         group.setDrawn(false);
         saveGroup(group);
+    }
+
+    public void deleteFriendsInGroup(GroupFriendDTO data) {
+        Group group = groupRepository.findGroupById(data.groupId()).orElseThrow();
+        Set<Long> idsToBeDeleted = data.friendIds();
+        for (Long id: idsToBeDeleted) {
+            if (!group.getFriendIds().contains(id)) {
+                throw new FriendNotInGroupException("O amigo com o ID fornecido não faz parte do grupo especificado.");
+            }
+            group.getFriendIds().remove(id);
+            saveGroup(group);
+        }
     }
 
     @Transactional
