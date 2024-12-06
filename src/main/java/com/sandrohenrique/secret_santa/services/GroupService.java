@@ -137,6 +137,7 @@ public class GroupService {
     }
 }
 
+// Preciso escolher entre nao deixar dois grupos com o mesmo nome, ou retornar uma lista no findByname
 // Um amigo só pode participar de um grupo, talvez depois que fizer o draw deletar o grupo e tirar o drawnFriendId de todos os amigos
 // Talvez os metodos com plural devem ser feitos no singular tambem
 // findByName provavelmente deve retornar mais de 1 grupo
