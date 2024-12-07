@@ -2,7 +2,6 @@ package com.sandrohenrique.secret_santa.services;
 
 import com.sandrohenrique.secret_santa.domain.Friend;
 import com.sandrohenrique.secret_santa.dtos.FriendDTO;
-import com.sandrohenrique.secret_santa.dtos.GroupFriendDTO;
 import com.sandrohenrique.secret_santa.exceptions.EntityNotFoundException;
 import com.sandrohenrique.secret_santa.exceptions.FriendAlreadyInGroupException;
 import com.sandrohenrique.secret_santa.repositories.FriendRepository;
@@ -41,7 +40,11 @@ public class FriendService {
     }
 
     public Friend findFriendById(Long id) {
-        return this.friendRepository.findFriendById(id).orElseThrow(() -> new EntityNotFoundException("Amigo com ID fornecido não encontrado!"));
+        return this.friendRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Amigo com ID fornecido não encontrado!"));
+    }
+
+    public Friend findFriendByEmail(String email) {
+        return this.friendRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Amigo com ID fornecido não encontrado!"));
     }
 
     public List<Friend> findAllFriendsById(Set<Long> friends) {
