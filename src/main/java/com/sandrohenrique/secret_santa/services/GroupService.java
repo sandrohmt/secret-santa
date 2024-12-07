@@ -137,6 +137,7 @@ public class GroupService {
     }
 }
 
+// segurança?
 // Preciso escolher entre nao deixar dois grupos com o mesmo nome, ou retornar uma lista no findByname
 // Um amigo só pode participar de um grupo, talvez depois que fizer o draw deletar o grupo e tirar o drawnFriendId de todos os amigos
 // Talvez os metodos com plural devem ser feitos no singular tambem
@@ -145,7 +146,9 @@ public class GroupService {
 // fazer um redraw
 // update friend
 // delete group
-// segurança?
 // testes
+// dockerizar
+// documentar com o swagger
+//
 // Tentar fazer arquitetura limpa no EmailService
 // Pesquisar stateful e stateless, csrf, bean e migrations
