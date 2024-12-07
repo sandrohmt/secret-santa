@@ -33,12 +33,9 @@ public class FriendService {
 
     public Friend createFriend(FriendDTO data) {
         Friend newFriend = new Friend(data);
-        List<Friend> friends = getAllFriends();
-        for (Friend friend : friends) {
-            if (newFriend.getEmail().equals(friend.getEmail())) {
+            if (this.friendRepository.findByEmail(newFriend.getEmail()).isPresent()) {
                 throw new FriendAlreadyInGroupException("Usuário já cadastrado com esse email!");
             }
-        }
         saveUser(newFriend);
         return newFriend;
     }
