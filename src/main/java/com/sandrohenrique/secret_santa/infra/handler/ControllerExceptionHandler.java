@@ -3,6 +3,7 @@ package com.sandrohenrique.secret_santa.infra.handler;
 import com.sandrohenrique.secret_santa.dtos.ExceptionDTO;
 import com.sandrohenrique.secret_santa.exceptions.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -36,6 +37,12 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(FriendNotInGroupException.class)
     public ResponseEntity<ExceptionDTO> handlefriendNotInGroupException(FriendNotInGroupException exception) {
         ExceptionDTO response = new ExceptionDTO(exception.getMessage(), "400");
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ExceptionDTO> handleBadCredentialsException(BadCredentialsException exception) {
+        ExceptionDTO response = new ExceptionDTO(exception.getMessage(), "403");
         return ResponseEntity.badRequest().body(response);
     }
 
