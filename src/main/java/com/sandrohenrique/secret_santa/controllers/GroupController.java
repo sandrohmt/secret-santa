@@ -1,7 +1,7 @@
 package com.sandrohenrique.secret_santa.controllers;
 
 import com.sandrohenrique.secret_santa.domain.Group;
-import com.sandrohenrique.secret_santa.dtos.GroupFriendDTO;
+import com.sandrohenrique.secret_santa.dtos.GroupFriendIdsDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
 import com.sandrohenrique.secret_santa.services.GroupService;
@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/groups")
@@ -24,9 +26,9 @@ public class GroupController {
     }
 
     @GetMapping(path = "by-name/{name}")
-    public ResponseEntity<GroupWithFriendsDTO> findGroupById(@PathVariable String name) {
-        GroupWithFriendsDTO group = groupService.findGroupWithFriendsByName(name);
-        return new ResponseEntity<>(group, HttpStatus.OK);
+    public ResponseEntity<List<GroupWithFriendsDTO>> findGroupByName(@PathVariable String name) {
+        List<GroupWithFriendsDTO> groups = groupService.findGroupWithFriendsByName(name);
+        return new ResponseEntity<>(groups, HttpStatus.OK);
     }
 
     @PostMapping(path = "createGroup")
@@ -37,7 +39,7 @@ public class GroupController {
 
 
     @PostMapping(path = "addFriends")
-    public ResponseEntity<String> addFriendsById(@RequestBody GroupFriendDTO data) {
+    public ResponseEntity<String> addFriendsById(@RequestBody GroupFriendIdsDTO data) {
         groupService.addFriendsById(data);
         return ResponseEntity.ok("Amigos adicionados com sucesso!");
     }
@@ -50,7 +52,7 @@ public class GroupController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteFriendsInGroup(@RequestBody GroupFriendDTO data) {
+    public ResponseEntity<Void> deleteFriendsInGroup(@RequestBody GroupFriendIdsDTO data) {
         groupService.deleteFriendsInGroup(data);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

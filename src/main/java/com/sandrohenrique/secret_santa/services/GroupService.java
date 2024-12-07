@@ -2,7 +2,7 @@ package com.sandrohenrique.secret_santa.services;
 
 import com.sandrohenrique.secret_santa.domain.Friend;
 import com.sandrohenrique.secret_santa.domain.Group;
-import com.sandrohenrique.secret_santa.dtos.GroupFriendDTO;
+import com.sandrohenrique.secret_santa.dtos.GroupFriendIdsDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
 import com.sandrohenrique.secret_santa.exceptions.*;
@@ -23,25 +23,41 @@ public class GroupService {
     private final EmailService emailService;
 
     public Group findGroupById(Long id) {
-        return this.groupRepository.findGroupById(id).orElseThrow(() -> new EntityNotFoundException("Grupo com ID fornecido não existe!"));
+        return this.groupRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Grupo com ID fornecido não existe!"));
     }
 
 
     public GroupWithFriendsDTO findGroupWIthFriendsById(Long id) {
-        Group group = this.groupRepository.findGroupById(id).orElseThrow(() -> new EntityNotFoundException("Grupo com ID fornecido não existe!"));
+        Group group = this.groupRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Grupo com ID fornecido não existe!"));
 
         List<Friend> friends = friendService.findAllFriendsById(group.getFriendIds());
 
         return new GroupWithFriendsDTO(group.getId(), group.getName(), group.getEventLocation(), group.getEventDate(), group.getSpendingCap(), friends);
     }
 
-    public GroupWithFriendsDTO findGroupWithFriendsByName(String name) {
-        Group group = this.groupRepository.findGroupByName(name).orElseThrow(() -> new EntityNotFoundException("Grupo com nome fornecido não existe!"));
+    public List<GroupWithFriendsDTO> findGroupWithFriendsByName(String name) {
+        List<Group> groups = this.groupRepository.findByName(name);
 
-        List<Friend> friends = friendService.findAllFriendsById(group.getFriendIds());
+        if (groups == null) {
+            throw new EntityNotFoundException("Grupo com nome fornecido não existe!");
+        }
 
-        return new GroupWithFriendsDTO(group.getId(), group.getName(), group.getEventLocation(), group.getEventDate(), group.getSpendingCap(), friends);
+        List<GroupWithFriendsDTO> groupWithFriendsDTOList = new ArrayList<>();
 
+        for (Group group: groups) {
+            List<Friend> friends = friendService.findAllFriendsById(group.getFriendIds());
+            GroupWithFriendsDTO dto = new GroupWithFriendsDTO(
+                    group.getId(),
+                    group.getName(),
+                    group.getEventLocation(),
+                    group.getEventDate(),
+                    group.getSpendingCap(),
+                    friends
+            );
+            groupWithFriendsDTOList.add(dto);
+        }
+
+        return groupWithFriendsDTOList;
     }
 
     public void saveGroup(Group group) {
@@ -55,7 +71,7 @@ public class GroupService {
         return newGroup;
     }
 
-    public void addFriendsById(GroupFriendDTO data) {
+    public void addFriendsById(GroupFriendIdsDTO data) {
         Group group = findGroupById(data.groupId());
 
         if (data.friendIds().isEmpty()) {
@@ -76,7 +92,7 @@ public class GroupService {
         saveGroup(group);
     }
 
-    public void deleteFriendsInGroup(GroupFriendDTO data) {
+    public void deleteFriendsInGroup(GroupFriendIdsDTO data) {
         Group group = findGroupById(data.groupId()); // olhar depois
         Set<Long> idsToBeDeleted = data.friendIds();
         for (Long id: idsToBeDeleted) {
@@ -137,18 +153,10 @@ public class GroupService {
     }
 }
 
-// segurança?
-// Preciso escolher entre nao deixar dois grupos com o mesmo nome, ou retornar uma lista no findByname
-// Um amigo só pode participar de um grupo, talvez depois que fizer o draw deletar o grupo e tirar o drawnFriendId de todos os amigos
-// Talvez os metodos com plural devem ser feitos no singular tambem
-// findByName provavelmente deve retornar mais de 1 grupo
+// testes
 // Acho que deveria renomear o GroupFriendDTO, ta mt parecido com o GroupWithFriends
 // fazer um redraw
-// update friend
 // delete group
-// testes
 // dockerizar
 // documentar com o swagger
-//
-// Tentar fazer arquitetura limpa no EmailService
 // Pesquisar stateful e stateless, csrf, bean e migrations
