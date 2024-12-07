@@ -9,7 +9,8 @@ import java.util.Optional;
 
 @Repository
 public interface FriendRepository extends JpaRepository<Friend, Long> {
-     Optional<Friend> findFriendById(Long id);
+     Optional<Friend> findById(Long id);
+     Optional<Friend> findByEmail(String email);
      List<Friend> findAllById(Iterable<Long> id);
      List<Friend> findAll();
 }
