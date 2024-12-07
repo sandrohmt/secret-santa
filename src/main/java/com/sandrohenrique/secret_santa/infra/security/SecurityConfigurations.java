@@ -31,6 +31,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "auth/register").permitAll() // O certo é bloquear o register, se não qualquer pessoa  pode criar um usuario com role de admin e fazer o que quiser na aplicação
                         .requestMatchers(HttpMethod.POST, "/groups/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/groups/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/friends/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
