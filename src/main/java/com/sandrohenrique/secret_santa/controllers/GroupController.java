@@ -21,7 +21,7 @@ public class GroupController {
 
     @GetMapping(path = "by-id/{id}")
     public ResponseEntity<GroupWithFriendsDTO> findGroupById(@PathVariable Long id) { // Mostrar o amigo sorteado tambem
-        GroupWithFriendsDTO group = groupService.findGroupWIthFriendsById(id);
+        GroupWithFriendsDTO group = groupService.findGroupWithFriendsById(id);
         return new ResponseEntity<>(group, HttpStatus.OK);
     }
 
@@ -46,7 +46,7 @@ public class GroupController {
 
     @PostMapping(path = "draw/{id}")
     public ResponseEntity<GroupWithFriendsDTO> drawFriends(@PathVariable Long id) {
-        GroupWithFriendsDTO group = groupService.findGroupWIthFriendsById(id);
+        GroupWithFriendsDTO group = groupService.findGroupWithFriendsById(id);
         groupService.drawFriends(id);
         return new ResponseEntity<>(group, HttpStatus.OK);
     }
