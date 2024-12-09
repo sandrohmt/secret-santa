@@ -22,13 +22,24 @@ public class GroupService {
     private final FriendService friendService;
     private final EmailService emailService;
 
+    public void saveGroup(Group group) {
+        this.groupRepository.save(group);
+    }
+
+    public Group createGroup(GroupDTO data) {
+        friendService.findAllFriendsById(data.friendIds());
+        Group newGroup = new Group(data);
+        saveGroup(newGroup);
+        return newGroup;
+    }
+
     public Group findGroupById(Long id) {
-        return this.groupRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Grupo com ID fornecido não existe!"));
+        return this.groupRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Grupo com ID fornecido não encontrado!"));
     }
 
 
-    public GroupWithFriendsDTO findGroupWIthFriendsById(Long id) {
-        Group group = this.groupRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Grupo com ID fornecido não existe!"));
+    public GroupWithFriendsDTO findGroupWithFriendsById(Long id) {
+        Group group = this.groupRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Grupo com ID fornecido não encontrado!"));
 
         List<Friend> friends = friendService.findAllFriendsById(group.getFriendIds());
 
@@ -39,7 +50,7 @@ public class GroupService {
         List<Group> groups = this.groupRepository.findByName(name);
 
         if (groups == null) {
-            throw new EntityNotFoundException("Grupo com nome fornecido não existe!");
+            throw new EntityNotFoundException("Grupo com nome fornecido não encontrado!");
         }
 
         List<GroupWithFriendsDTO> groupWithFriendsDTOList = new ArrayList<>();
@@ -58,17 +69,6 @@ public class GroupService {
         }
 
         return groupWithFriendsDTOList;
-    }
-
-    public void saveGroup(Group group) {
-        this.groupRepository.save(group);
-    }
-
-    public Group createGroup(GroupDTO data) {
-        friendService.findAllFriendsById(data.friendIds());
-        Group newGroup = new Group(data);
-        saveGroup(newGroup);
-        return newGroup;
     }
 
     public void addFriendsById(GroupFriendIdsDTO data) {
@@ -153,8 +153,11 @@ public class GroupService {
     }
 }
 
-// testes
-// Acho que deveria renomear o GroupFriendDTO, ta mt parecido com o GroupWithFriends
+// Deixar a ordem dos metodos dos services padronizada, depois consertar a ordem dos testes tambem
+// Talvez colocar LocalDateTime em vez de LocalDate, pra dizer o horario do evento tambem
+// Criar um Service compartilhado e colocar os métodos de GroupService que injetam FriendService e colocar o deleteFriends la, ou só colocar o metodo de deleteFriend mesmo, e fazer os testes desse service novo
+// Fazer os testes do GroupService
+// SpringWebMVC
 // fazer um redraw
 // delete group
 // dockerizar
