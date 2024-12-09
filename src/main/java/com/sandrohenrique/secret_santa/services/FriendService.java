@@ -22,7 +22,7 @@ public class FriendService {
         this.friendRepository.saveAll(friends);
     }
 
-    public void saveUser(Friend friend) {
+    public void saveFriend(Friend friend) {
         this.friendRepository.save(friend);
     }
 
@@ -33,9 +33,9 @@ public class FriendService {
     public Friend createFriend(FriendDTO data) {
         Friend newFriend = new Friend(data);
             if (this.friendRepository.findByEmail(newFriend.getEmail()).isPresent()) {
-                throw new FriendAlreadyInGroupException("Usuário já cadastrado com esse email!");
+                throw new FriendAlreadyInGroupException("Amigo com email fornecido já cadastrado!");
             }
-        saveUser(newFriend);
+        saveFriend(newFriend);
         return newFriend;
     }
 
@@ -44,7 +44,7 @@ public class FriendService {
     }
 
     public Friend findFriendByEmail(String email) {
-        return this.friendRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Amigo com ID fornecido não encontrado!"));
+        return this.friendRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Amigo com email fornecido não encontrado!"));
     }
 
     public List<Friend> findAllFriendsById(Set<Long> friends) {
