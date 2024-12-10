@@ -5,7 +5,6 @@ import com.sandrohenrique.secret_santa.domain.Group;
 import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
 import com.sandrohenrique.secret_santa.exceptions.EntityNotFoundException;
 import com.sandrohenrique.secret_santa.repositories.GroupRepository;
-import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,7 @@ import static org.mockito.Mockito.*;
 
 
 @SpringBootTest
-public class GroupServiceTest {
+class GroupServiceTest {
 
     @InjectMocks
     private GroupService groupService;
@@ -94,5 +93,14 @@ public class GroupServiceTest {
         verify(friendService, times(1)).findAllFriendsById(expectedGroup.getFriendIds());
     }
 
+    @Test
+    @DisplayName("findGroupWIthFriendsById throws EntityNotFoundException when a Group is not found")
+    void findGroupWIthFriendsById_ThrowsEntityNotFoundException_WhenGroupIsNotFound() {
+        when(groupRepository.findById(1L)).thenReturn(Optional.empty());
 
+        EntityNotFoundException thrown = Assertions.assertThrows(EntityNotFoundException.class, () -> groupService.findGroupWithFriendsById(1L));
+
+        Assertions.assertEquals("Grupo com ID fornecido não encontrado!", thrown.getMessage());
+        verify(groupRepository, times(1)).findById(1L);
+    }
 }
