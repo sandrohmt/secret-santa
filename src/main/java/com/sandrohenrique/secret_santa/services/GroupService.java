@@ -49,7 +49,7 @@ public class GroupService {
     public List<GroupWithFriendsDTO> findGroupWithFriendsByName(String name) {
         List<Group> groups = this.groupRepository.findByName(name);
 
-        if (groups == null) {
+        if (groups.equals(Collections.emptyList())) {
             throw new EntityNotFoundException("Grupo com nome fornecido não encontrado!");
         }
 
@@ -153,6 +153,7 @@ public class GroupService {
     }
 }
 
+// consertar aqueles assertions gigantes
 // Deixar a ordem dos metodos dos services padronizada, depois consertar a ordem dos testes tambem
 // Talvez colocar LocalDateTime em vez de LocalDate, pra dizer o horario do evento tambem
 // Criar um Service compartilhado e colocar os métodos de GroupService que injetam FriendService e colocar o deleteFriends la, ou só colocar o metodo de deleteFriend mesmo, e fazer os testes desse service novo
