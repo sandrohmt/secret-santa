@@ -27,7 +27,7 @@ class FriendServiceTest {
 
     @Test
     @DisplayName("getAllFriends returns a list of Friends when successful")
-    void getAllFriends_ReturnsListOfFriends_WhenSuccessful() {
+    void getAllFriends_ReturnListOfFriends_WhenSuccessful() {
         Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
         Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
 
@@ -40,7 +40,7 @@ class FriendServiceTest {
 
     @Test
     @DisplayName("getAllFriends returns an empty list when no Friends are found")
-    void getAllFriends_ReturnsEmptyList_WhenNoFriendsAreFound() {
+    void getAllFriends_ReturnEmptyList_WhenNoFriendsAreFound() {
         when(friendRepository.findAll()).thenReturn(Collections.emptyList());
 
         List<Friend> friends = friendService.getAllFriends();
@@ -56,7 +56,7 @@ class FriendServiceTest {
         Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
         List<Friend> friends = List.of(friend1, friend2);
 
-        friendService.saveAllUsers(friends);
+        friendService.saveAllFriends(friends);
 
         verify(friendRepository, times(1)).saveAll(friends);
     }
@@ -79,7 +79,7 @@ class FriendServiceTest {
 
     @Test
     @DisplayName("createFriend throws FriendAlreadyInGroupException when Friend is already in Group")
-    void createFriend_ThrowsFriendAlreadyInGroupException_WhenFriendIsAlreadyInGroup() {
+    void createFriend_ThrowFriendAlreadyInGroupException_WhenFriendIsAlreadyInGroup() {
         FriendDTO friendDTO = new FriendDTO("Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"));
         Friend existingFriend = new Friend(friendDTO);
 
@@ -93,7 +93,7 @@ class FriendServiceTest {
 
     @Test
     @DisplayName("findFriendById returns a Friend when successful")
-    void findFriendById_ReturnsFriend_WhenSuccessful() {
+    void findFriendById_ReturnFriend_WhenSuccessful() {
         Long friendId = 1L;
         Friend expectedFriend = new Friend(friendId, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
 
@@ -108,7 +108,7 @@ class FriendServiceTest {
 
     @Test
     @DisplayName("findFriendById throws EntityNotFoundException when a friend is not found")
-    void findFriendById_ThrowsEntityNotFoundException_WhenFriendIsNotFound() {
+    void findFriendById_ThrowEntityNotFoundException_WhenFriendIsNotFound() {
         when(friendRepository.findById(1L)).thenReturn(Optional.empty());
 
         EntityNotFoundException thrown = Assertions.assertThrows(EntityNotFoundException.class, () -> friendService.findFriendById(1L));
@@ -118,7 +118,7 @@ class FriendServiceTest {
 
     @Test
     @DisplayName("findFriendByEmail returns a Friend when successful")
-    void findFriendByEmail_ReturnsFriend_WhenSuccessful() {
+    void findFriendByEmail_ReturnFriend_WhenSuccessful() {
         String friendEmail = "mariasilva@gmail.com";
         Friend expectedFriend = new Friend(1L, "Maria", "Silva", friendEmail, List.of("Playstation 5", "Celular"), null);
 
@@ -133,7 +133,7 @@ class FriendServiceTest {
 
     @Test
     @DisplayName("findFriendByEmail throws EntityNotFoundException when a friend is not found")
-    void findFriendByEmail_ThrowsEntityNotFoundException_WhenFriendIsNotFound() {
+    void findFriendByEmail_ThrowEntityNotFoundException_WhenFriendIsNotFound() {
         String friendEmail = "mariasilva@gmail.com";
 
         when(friendRepository.findByEmail(friendEmail)).thenReturn(Optional.empty());
@@ -145,7 +145,7 @@ class FriendServiceTest {
 
     @Test
     @DisplayName("findAllFriendsById returns a list of Friends when successful")
-    void findAllFriendsById_ReturnsListOfFriend_WhenSuccessful() {
+    void findAllFriendsById_ReturnListOfFriend_WhenSuccessful() {
         Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
         Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
 
@@ -167,7 +167,7 @@ class FriendServiceTest {
 
     @Test
     @DisplayName("findAllFriendsById throws EntityNotFoundException when any Friend is not found")
-    void findAllFriendsById_ThrowsEntityNotFoundException_WhenAnyFriendIsNotFound() {
+    void findAllFriendsById_ThrowEntityNotFoundException_WhenAnyFriendIsNotFound() {
         Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
         Set<Long> friendIds = Set.of(friend1.getId(), 2L);
 

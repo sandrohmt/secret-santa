@@ -18,7 +18,7 @@ public class FriendService {
     private final FriendRepository friendRepository;
 //    private final GroupService groupService; Provavelmente mandar remover o amigo no groupService
 
-    public void saveAllUsers(List<Friend> friends) {
+    public void saveAllFriends(List<Friend> friends) {
         this.friendRepository.saveAll(friends);
     }
 

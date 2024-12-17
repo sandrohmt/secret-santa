@@ -130,7 +130,7 @@ public class GroupService {
             sendEmailsToFriends(group, current);
         }
 
-        friendService.saveAllUsers(friends);
+        friendService.saveAllFriends(friends);
 
         group.setDrawn(true);
         saveGroup(group);
