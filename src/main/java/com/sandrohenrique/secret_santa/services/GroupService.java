@@ -114,8 +114,8 @@ public class GroupService {
 
         List<Friend> friends = friendService.findAllFriendsById(group.getFriendIds());
 
-        if (friends.size() < 2) {
-            throw new InsufficientFriendsException("É necessário pelo menos 2 amigos para realizar o sorteio!");
+        if (friends.size() < 3) {
+            throw new InsufficientFriendsException("É necessário pelo menos 3 amigos para realizar o sorteio!");
         }
 
         LinkedList<Friend> shuffledFriends = new LinkedList<>(friends);
