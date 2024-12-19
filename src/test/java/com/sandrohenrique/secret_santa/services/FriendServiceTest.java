@@ -2,6 +2,7 @@ package com.sandrohenrique.secret_santa.services;
 
 import com.sandrohenrique.secret_santa.domain.Friend;
 import com.sandrohenrique.secret_santa.dtos.FriendDTO;
+import com.sandrohenrique.secret_santa.exceptions.EmailAlreadyRegisteredException;
 import com.sandrohenrique.secret_santa.exceptions.EntityNotFoundException;
 import com.sandrohenrique.secret_santa.exceptions.FriendAlreadyInGroupException;
 import com.sandrohenrique.secret_santa.repositories.FriendRepository;
@@ -78,14 +79,14 @@ class FriendServiceTest {
     }
 
     @Test
-    @DisplayName("createFriend throws FriendAlreadyInGroupException when Friend is already in Group")
-    void createFriend_ThrowFriendAlreadyInGroupException_WhenFriendIsAlreadyInGroup() {
+    @DisplayName("createFriend throws EmailAlreadyRegisteredException when Friend is already in Group")
+    void createFriend_ThrowEmailAlreadyRegisteredException_WhenFriendIsAlreadyInGroup() {
         FriendDTO friendDTO = new FriendDTO("Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"));
         Friend existingFriend = new Friend(friendDTO);
 
         when(friendRepository.findByEmail(friendDTO.email())).thenReturn(Optional.of(existingFriend)); // Simulando situação que um amigo já está no grupo
 
-        FriendAlreadyInGroupException thrown = Assertions.assertThrows(FriendAlreadyInGroupException.class, () -> friendService.createFriend(friendDTO));
+        EmailAlreadyRegisteredException thrown = Assertions.assertThrows(EmailAlreadyRegisteredException.class, () -> friendService.createFriend(friendDTO));
 
         Assertions.assertEquals("Amigo com email fornecido já cadastrado!", thrown.getMessage());
         verify(friendRepository, never()).save(any(Friend.class)); // garante que o save não foi chamado pois o email o amigo tinha email repetido

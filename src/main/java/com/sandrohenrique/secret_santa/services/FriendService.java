@@ -2,6 +2,7 @@ package com.sandrohenrique.secret_santa.services;
 
 import com.sandrohenrique.secret_santa.domain.Friend;
 import com.sandrohenrique.secret_santa.dtos.FriendDTO;
+import com.sandrohenrique.secret_santa.exceptions.EmailAlreadyRegisteredException;
 import com.sandrohenrique.secret_santa.exceptions.EntityNotFoundException;
 import com.sandrohenrique.secret_santa.exceptions.FriendAlreadyInGroupException;
 import com.sandrohenrique.secret_santa.repositories.FriendRepository;
@@ -33,7 +34,7 @@ public class FriendService {
     public Friend createFriend(FriendDTO data) {
         Friend newFriend = new Friend(data);
             if (this.friendRepository.findByEmail(newFriend.getEmail()).isPresent()) {
-                throw new FriendAlreadyInGroupException("Amigo com email fornecido já cadastrado!");
+                throw new EmailAlreadyRegisteredException("Amigo com email fornecido já cadastrado!");
             }
         saveFriend(newFriend);
         return newFriend;
