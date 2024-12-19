@@ -5,10 +5,9 @@ import com.sandrohenrique.secret_santa.domain.Group;
 import com.sandrohenrique.secret_santa.dtos.GroupDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupFriendIdsDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
-import com.sandrohenrique.secret_santa.exceptions.EntityNotFoundException;
+import com.sandrohenrique.secret_santa.exceptions.*;
 import com.sandrohenrique.secret_santa.repositories.FriendRepository;
 import com.sandrohenrique.secret_santa.repositories.GroupRepository;
-import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,7 +63,7 @@ class GroupServiceTest {
         Assertions.assertEquals(friendIds, group.getFriendIds());
     }
 
-    @Test
+    @Test // Consertar esse teste, talvez tenha que mudar a implementação do createGroup.
     @DisplayName("createGroup throws EntityNotFoundException when Friend id is not found")
     void createGroup_ThrowEntityNotFoundException_WhenFriendIdIsNotFound() {
         Set<Long> ids = Set.of(1L, 2L);
@@ -80,7 +79,7 @@ class GroupServiceTest {
         Assertions.assertEquals("Amigo com ID fornecido não encontrado!", thrown.getMessage());
 
         verify(groupRepository, never()).save(any(Group.class));
-    } // Consertar esse teste, talvez tenha que mudar a implementação do createGroup.
+    }
 
 
     @Test
@@ -218,4 +217,176 @@ class GroupServiceTest {
 
         verify(groupRepository, times(1)).save(group);
     }
+
+    @Test
+    @DisplayName("addFriendsById throws InsufficientFriendsException when no Friends are added")
+    void addFriendsById_ThrowInsufficientFriendsException_WhenNoFriendsAreAdded() {
+        Long groupId = 1L;
+        LocalDate eventDate = LocalDate.of(2024, 12, 20);
+        Group group = new Group(groupId, "Amigo Secreto de Fim de Ano", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, new HashSet<>(), false);
+
+        GroupFriendIdsDTO data = new GroupFriendIdsDTO(groupId, Set.of());
+
+        when(groupRepository.findById(groupId)).thenReturn(Optional.of(group));
+        when(friendRepository.findById(1L)).thenReturn(Optional.empty());
+        when(friendRepository.findById(2L)).thenReturn(Optional.empty());
+
+        InsufficientFriendsException thrown = Assertions.assertThrows(InsufficientFriendsException.class, () -> groupService.addFriendsById(data));
+
+        Assertions.assertEquals("Adicione pelo menos um amigo!" , thrown.getMessage());
+
+        verify(groupRepository, never()).save(group);
+    }
+
+    @Test
+    @DisplayName("addFriendsById throws FriendAlreadyInGroupException when Friend is already in the group")
+    void addFriendsById_ThrowFriendAlreadyInGroupException_WhenFriendIsAlreadyInTheGroup() {
+        Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
+        Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
+
+        Long groupId = 1L;
+        LocalDate eventDate = LocalDate.of(2024, 12, 20);
+        Group group = new Group(groupId, "Amigo Secreto de Fim de Ano", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, Set.of(1L, 2L), false);
+
+        GroupFriendIdsDTO data = new GroupFriendIdsDTO(groupId, Set.of(friend1.getId(), friend2.getId()));
+
+        when(groupRepository.findById(groupId)).thenReturn(Optional.of(group));
+        when(friendRepository.findById(friend1.getId())).thenReturn(Optional.of(friend1));
+        when(friendRepository.findById(friend2.getId())).thenReturn(Optional.of(friend2));
+
+        FriendAlreadyInGroupException thrown = Assertions.assertThrows(FriendAlreadyInGroupException.class, () -> groupService.addFriendsById(data));
+
+        Assertions.assertEquals("Amigo já pertence a esse grupo!" , thrown.getMessage());
+
+        Assertions.assertEquals(Set.of(1L, 2L), group.getFriendIds());
+
+        verify(groupRepository, never()).save(group);
+    }
+
+    @Test
+    @DisplayName("deleteFriendsInGroup delete Friends from Group when successful")
+    void deleteFriendsInGroup_DeleteFriendsFromGroup_WhenSuccessful() {
+        Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
+        Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
+
+        Long groupId = 1L;
+        LocalDate eventDate = LocalDate.of(2024, 12, 20);
+        Group group = new Group(groupId, "Amigo Secreto de Fim de Ano", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, new HashSet<>(Set.of(1L, 2L)), false);
+
+        GroupFriendIdsDTO data = new GroupFriendIdsDTO(groupId, Set.of(friend1.getId(), friend2.getId()));
+
+        when(groupRepository.findById(groupId)).thenReturn(Optional.of(group));
+
+        groupService.deleteFriendsInGroup(data);
+
+        Assertions.assertTrue(group.getFriendIds().isEmpty());
+
+        verify(groupRepository, times(1)).findById(groupId);
+        verify(groupRepository, times(2)).save(group);
+    }
+
+    @Test
+    @DisplayName("deleteFriendsInGroup throws FriendNotInGroupException when Friend is not in Group")
+    void deleteFriendsInGroup_ThrowFriendNotInGroupException_WhenFriendIsNotInGroup() {
+        Long groupId = 1L;
+        LocalDate eventDate = LocalDate.of(2024, 12, 20);
+        Group group = new Group(groupId, "Amigo Secreto de Fim de Ano", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, Set.of(), false);
+
+        GroupFriendIdsDTO data = new GroupFriendIdsDTO(groupId, Set.of(1L));
+
+        when(groupRepository.findById(groupId)).thenReturn(Optional.of(group));
+
+        FriendNotInGroupException thrown = Assertions.assertThrows(FriendNotInGroupException.class, () -> groupService.deleteFriendsInGroup(data));
+
+        Assertions.assertEquals("O amigo com o ID fornecido não faz parte do grupo especificado." , thrown.getMessage());
+
+        Assertions.assertTrue(group.getFriendIds().isEmpty());
+
+        verify(groupRepository, times(1)).findById(groupId);
+        verify(groupRepository, never()).save(group);
+    }
+
+    @Test
+    @DisplayName("drawFriends draw Friends when successful")
+    void drawFriends_DrawFriends_WhenSuccessful() {
+        Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
+        Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
+        Friend friend3 = new Friend(3L, "Arthur", "Oliveira", "arthuroliveira@gmail.com", List.of("Kindle", "Livro"), null);
+        List<Friend> friends = List.of(friend1, friend2, friend3);
+        Set<Long> friendIds = Set.of(friend1.getId(), friend2.getId(), friend3.getId());
+
+        Long groupId = 1L;
+        LocalDate eventDate = LocalDate.of(2024, 12, 20);
+        Group group = new Group(groupId, "Amigo Secreto de Fim de Ano", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, Set.of(1L, 2L, 3L), false);
+
+
+        when(groupRepository.findById(groupId)).thenReturn(Optional.of(group));
+        when(friendService.findAllFriendsById(friendIds)).thenReturn(friends);
+        when(friendService.findFriendById(1L)).thenReturn(friend3);
+        when(friendService.findFriendById(2L)).thenReturn(friend1);
+        when(friendService.findFriendById(3L)).thenReturn(friend2);
+
+        groupService.drawFriends(groupId);
+
+        verify(groupRepository, times(1)).findById(groupId);
+        verify(friendService, times(1)).saveAllFriends(friends);
+        verify(groupRepository, times(1)).save(group);
+
+        Assertions.assertTrue(group.isDrawn());
+        Assertions.assertEquals(friend1.getId(), friend3.getDrawnFriendId());
+        Assertions.assertEquals(friend2.getId(), friend1.getDrawnFriendId());
+        Assertions.assertEquals(friend3.getId(), friend2.getDrawnFriendId());
+    }
+
+    @Test
+    @DisplayName("drawFriends throws GroupAlreadyDrawnException when Group was already drawn")
+    void drawFriends_ThrowGroupAlreadyDrawnException_WhenGroupWasAlreadyDrawn() {
+        Long groupId = 1L;
+        LocalDate eventDate = LocalDate.of(2024, 12, 20);
+        Group group = new Group(groupId, "Amigo Secreto de Fim de Ano", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, Set.of(1L, 2L, 3L), true);
+
+        when(groupRepository.findById(groupId)).thenReturn(Optional.of(group));
+
+        GroupAlreadyDrawnException thrown = Assertions.assertThrows(GroupAlreadyDrawnException.class, () -> groupService.drawFriends(groupId));
+
+        Assertions.assertEquals("Grupo já foi sorteado!" , thrown.getMessage());
+
+        verify(groupRepository, times(1)).findById(groupId);
+        verify(groupRepository, never()).save(group);
+
+        Assertions.assertTrue(group.isDrawn());
+    }
+
+    @Test
+    @DisplayName("drawFriends throws InsufficientFriendsException when Group has less than 3 friends")
+    void drawFriends_ThrowInsufficientFriendsException_WhenGroupHasLessThan3Friends() {
+        Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
+        Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
+        List<Friend> friends = List.of(friend1, friend2);
+        Set<Long> friendIds = Set.of(friend1.getId(), friend2.getId());
+
+        Long groupId = 1L;
+        LocalDate eventDate = LocalDate.of(2024, 12, 20);
+        Group group = new Group(groupId, "Amigo Secreto de Fim de Ano", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, Set.of(1L, 2L), false);
+
+        when(groupRepository.findById(groupId)).thenReturn(Optional.of(group));
+        when(friendService.findAllFriendsById(friendIds)).thenReturn(friends);
+
+        InsufficientFriendsException thrown = Assertions.assertThrows(InsufficientFriendsException.class, () -> groupService.drawFriends(groupId));
+
+        Assertions.assertEquals("É necessário pelo menos 3 amigos para realizar o sorteio!" , thrown.getMessage());
+
+
+        verify(groupRepository, times(1)).findById(groupId);
+        verify(friendService, never()).saveAllFriends(friends);
+        verify(groupRepository, never()).save(group);
+
+        Assertions.assertFalse(group.isDrawn());
+    }
 }
+
+// Falta o sendEmailsToFriends pra fazer, não sei se vai ser necessario
+// Ver o teste que nao tava rodando
+// Testar o Email Service tambem
+// Testar os NotNull das entidades
+// Tem que aprender a testar os controllers
