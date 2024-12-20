@@ -1,7 +1,6 @@
 package com.sandrohenrique.secret_santa.repositories;
 
 import com.sandrohenrique.secret_santa.domain.Friend;
-import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
