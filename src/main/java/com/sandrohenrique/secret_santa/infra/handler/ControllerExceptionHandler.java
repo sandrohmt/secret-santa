@@ -2,6 +2,7 @@ package com.sandrohenrique.secret_santa.infra.handler;
 
 import com.sandrohenrique.secret_santa.dtos.ExceptionDTO;
 import com.sandrohenrique.secret_santa.exceptions.*;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -43,6 +44,12 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(EmailAlreadyRegisteredException.class)
     public ResponseEntity<ExceptionDTO> handleEmailAlreadyRegisteredException(EmailAlreadyRegisteredException exception) {
         ExceptionDTO response = new ExceptionDTO(exception.getMessage(), "409");
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ExceptionDTO> handleConstraintViolationException(ConstraintViolationException exception) {
+        ExceptionDTO response = new ExceptionDTO(exception.getMessage(), "400");
         return ResponseEntity.badRequest().body(response);
     }
 
