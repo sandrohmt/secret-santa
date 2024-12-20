@@ -21,7 +21,7 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "The firstName cannot be empty")
+    @NotEmpty(message = "The name cannot be empty")
     private String name;
 
     @NotEmpty(message = "The eventLocation cannot be empty")
