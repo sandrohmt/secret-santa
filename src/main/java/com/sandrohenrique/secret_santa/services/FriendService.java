@@ -4,7 +4,6 @@ import com.sandrohenrique.secret_santa.domain.Friend;
 import com.sandrohenrique.secret_santa.dtos.FriendDTO;
 import com.sandrohenrique.secret_santa.exceptions.EmailAlreadyRegisteredException;
 import com.sandrohenrique.secret_santa.exceptions.EntityNotFoundException;
-import com.sandrohenrique.secret_santa.exceptions.FriendAlreadyInGroupException;
 import com.sandrohenrique.secret_santa.repositories.FriendRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -448,8 +448,5 @@ class GroupServiceTest {
     }
 }
 
-// Falta o sendEmailsToFriends pra fazer, não sei se vai ser necessario
 // Ver o teste que nao tava rodando
-// Testar o Email Service tambem
-// Testar os NotNull das entidades
 // Tem que aprender a testar os controllers

@@ -4,7 +4,6 @@ import com.sandrohenrique.secret_santa.domain.Friend;
 import com.sandrohenrique.secret_santa.dtos.FriendDTO;
 import com.sandrohenrique.secret_santa.exceptions.EmailAlreadyRegisteredException;
 import com.sandrohenrique.secret_santa.exceptions.EntityNotFoundException;
-import com.sandrohenrique.secret_santa.exceptions.FriendAlreadyInGroupException;
 import com.sandrohenrique.secret_santa.repositories.FriendRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +24,18 @@ class FriendServiceTest {
 
     @Mock
     private FriendRepository friendRepository;
+
+    @Test
+    @DisplayName("saveAllFriends saves all friends when successful")
+    void saveAllFriends_SavesAllFriends_WhenSucessful() {
+        Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
+        Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
+        List<Friend> friends = List.of(friend1, friend2);
+
+        friendService.saveAllFriends(friends);
+
+        verify(friendRepository, times(1)).saveAll(friends);
+    }
 
     @Test
     @DisplayName("getAllFriends returns a list of Friends when successful")
@@ -48,18 +59,6 @@ class FriendServiceTest {
 
         Assertions.assertNotNull(friends);
         Assertions.assertTrue(friends.isEmpty());
-    }
-
-    @Test
-    @DisplayName("saveAllFriends saves all friends when successful")
-    void saveAllFriends_SavesAllFriends_WhenSucessful() {
-        Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
-        Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
-        List<Friend> friends = List.of(friend1, friend2);
-
-        friendService.saveAllFriends(friends);
-
-        verify(friendRepository, times(1)).saveAll(friends);
     }
 
     @Test
