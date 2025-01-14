@@ -37,7 +37,6 @@ public class GroupController {
         return new ResponseEntity<>(newGroup, HttpStatus.CREATED);
     }
 
-
     @PostMapping(path = "addFriends")
     public ResponseEntity<String> addFriendsById(@RequestBody GroupFriendIdsDTO data) {
         groupService.addFriendsById(data);
