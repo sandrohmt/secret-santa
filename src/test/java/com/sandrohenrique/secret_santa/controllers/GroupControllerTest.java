@@ -104,7 +104,7 @@ class GroupControllerTest {
     }
 
     @Test
-    @DisplayName("addFriendsById add friends with status 200 to group when successful")
+    @DisplayName("addFriendsById add friends to group with status 200 when successful")
     void addFriendsById_AddFriendsToGroupWithStatus200_WhenSuccessful() {
         Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
         Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
@@ -127,5 +127,28 @@ class GroupControllerTest {
         Assertions.assertNotNull(responseEntity.getBody());
 
         verify(groupService, times(1)).addFriendsById(data);
+    }
+
+    @Test
+    @DisplayName("drawFriends draw Friends with status 200 when successful")
+    void drawFriends_DrawFriendsWithStatus200_WhenSuccessful() {
+        Long groupId = 1L;
+        LocalDate eventDate = LocalDate.of(2024, 12, 20);
+        Group expectedGroup = new Group(groupId, "Amigo Secreto de Fim de Ano", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, new HashSet<>(), false);
+
+        Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
+        Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
+        Friend friend3 = new Friend(3L, "Arthur", "Oliveira", "arthuroliveira@gmail.com", List.of("Kindle", "Livro"), null);
+
+        when(groupService.findGroupById(groupId)).thenReturn(expectedGroup);
+        when(friendService.findAllFriendsById(expectedGroup.getFriendIds())).thenReturn(List.of(friend1, friend2, friend3));
+
+        ResponseEntity<GroupWithFriendsDTO> responseEntity = groupController.drawFriends(groupId);
+
+        Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        Assertions.assertNotNull(responseEntity);
+        Assertions.assertNotNull(responseEntity.getBody());
+
+        verify(groupService, times(1)).drawFriends(groupId);
     }
 }
