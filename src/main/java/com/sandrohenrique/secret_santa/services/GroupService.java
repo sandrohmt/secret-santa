@@ -158,5 +158,6 @@ public class GroupService {
 // Criar um Service compartilhado e colocar os métodos de GroupService que injetam FriendService e colocar o deleteFriends la, ou só colocar o metodo de deleteFriend mesmo, e fazer os testes desse service novo
 // Talvez criar um classe com método pra criar amigos em vez de ficar criando dentro de cada teste
 // delete group
-// documentar com o swagger
+// documentar com o swagger, procurar o github do MurilloMarquesSantos para essas e mais coisas
 // Pesquisar stateful e stateless, csrf, bean e migrations
+// Postar o projeto no github
