@@ -167,7 +167,7 @@ class GroupControllerTest {
 
         ResponseEntity<Void> responseEntity = groupController.deleteFriendsInGroup(data);
 
-        Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        Assertions.assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
         Assertions.assertNotNull(responseEntity);
 
         verify(groupService, times(1)).deleteFriendsInGroup(data);
