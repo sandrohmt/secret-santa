@@ -155,8 +155,7 @@ public class GroupService {
 
 // Talvez colocar LocalDateTime em vez de LocalDate, pra dizer o horario do evento tambem
 // Criar um Service compartilhado e colocar os métodos de GroupService que injetam FriendService e colocar o deleteFriends la, ou só colocar o metodo de deleteFriend mesmo, e fazer os testes desse service novo
-// SpringWebMVC
+// Talvez criar um classe com método pra criar amigos em vez de ficar criando dentro de cada teste
 // delete group
-// dockerizar
 // documentar com o swagger
 // Pesquisar stateful e stateless, csrf, bean e migrations
