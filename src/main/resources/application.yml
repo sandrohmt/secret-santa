@@ -1,0 +1,36 @@
+spring.application.name: secret-santa
+server:
+  error:
+    include-stacktrace: never
+
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: sandrohmt@gmail.com
+    password: ehjz duru rqbh xaye
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/secret-santa?&createDatabaseIfNotExist=true
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+      dialect: org.hibernate.dialect.MYSQL8Dialect
+    show-sql: true
+profiles:
+  active: dev
+
+api:
+  security:
+    token:
+      secret: ${JWT_SECRET:my-secret-key}
+
+
