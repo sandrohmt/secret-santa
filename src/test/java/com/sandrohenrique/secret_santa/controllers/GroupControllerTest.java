@@ -51,4 +51,28 @@ public class GroupControllerTest {
         Assertions.assertNotNull(responseEntity);
         Assertions.assertNotNull(responseEntity.getBody());
     }
+
+    @Test
+    @DisplayName("findGroupByName returns a Group when successful")
+    void findGroupByName_ReturnGroup_WhenSuccessful() {
+        Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
+        Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
+        List<Friend> friends = List.of(friend1, friend2);
+
+        Long groupId = 1L;
+        String groupName = "Amigo Secreto de Fim de Ano";
+        LocalDate eventDate = LocalDate.of(2024, 12, 20);
+        GroupWithFriendsDTO expectedDTO = new GroupWithFriendsDTO(groupId, groupName, "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, friends);
+        List<GroupWithFriendsDTO> DTOList = List.of(expectedDTO);
+
+        when(groupService.findGroupWithFriendsByName(groupName)).thenReturn(DTOList);
+
+        ResponseEntity<List<GroupWithFriendsDTO>> responseEntity = groupController.findGroupByName(groupName);
+
+        Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        Assertions.assertNotNull(responseEntity);
+        Assertions.assertNotNull(responseEntity.getBody());
+        Assertions.assertEquals(DTOList, responseEntity.getBody());
+        Assertions.assertEquals(DTOList.size(), responseEntity.getBody().size());
+    }
 }
