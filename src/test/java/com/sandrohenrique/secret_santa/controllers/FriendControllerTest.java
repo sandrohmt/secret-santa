@@ -144,12 +144,11 @@ class FriendControllerTest {
         try {
             friendController.createFriends(friendDTOs);
         } catch (EmailAlreadyRegisteredException ex) {
-            response = ResponseEntity.status(HttpStatus.CONFLICT).build(); // Simulando a resposta do handler global
+            response = ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        // Assert: verificar o status da resposta
-        Assertions.assertNotNull(response); // Certificar-se de que a resposta não é nula
-        Assertions.assertEquals(HttpStatus.CONFLICT, response.getStatusCode()); // Verificar se o status é 409
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
 
         verify(friendService, times(1)).createFriend(friendDTO1);
     }
