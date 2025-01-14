@@ -2,6 +2,7 @@ package com.sandrohenrique.secret_santa.controllers;
 
 import com.sandrohenrique.secret_santa.domain.Friend;
 import com.sandrohenrique.secret_santa.domain.Group;
+import com.sandrohenrique.secret_santa.dtos.FriendDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupFriendIdsDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
@@ -74,5 +75,24 @@ public class GroupControllerTest {
         Assertions.assertNotNull(responseEntity.getBody());
         Assertions.assertEquals(DTOList, responseEntity.getBody());
         Assertions.assertEquals(DTOList.size(), responseEntity.getBody().size());
+    }
+
+    @Test
+    @DisplayName("createGroup return Group with status 201 when successful")
+    void createGroup_ReturnGroupWithStatus201_WhenSuccessful() {
+        LocalDate eventDate = LocalDate.of(2024, 12, 20);
+        GroupDTO groupDTO = new GroupDTO("Natal em família", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, friendIds);
+        Group expectedGroup = new Group(groupDTO);
+
+        when(groupService.createGroup(groupDTO)).thenReturn(expectedGroup);
+
+        ResponseEntity<Group> responseEntity = groupController.createGroup(groupDTO);
+
+        Assertions.assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+        Assertions.assertNotNull(responseEntity);
+        Assertions.assertNotNull(responseEntity.getBody());
+        Assertions.assertEquals(expectedGroup, responseEntity.getBody());
+
+        verify(groupService, times(1)).createGroup(groupDTO);
     }
 }
