@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.Set;
 
-@Entity(name = "groups")
-@Table(name = "groups")
+@Entity(name = "friend_group")
+@Table(name = "friend_group")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
