@@ -171,6 +171,5 @@ class GroupControllerTest {
         Assertions.assertNotNull(responseEntity);
 
         verify(groupService, times(1)).deleteFriendsInGroup(data);
-
     }
 }
