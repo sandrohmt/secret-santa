@@ -78,7 +78,6 @@ class FriendControllerTest {
         verify(friendService, times(1)).createFriend(friendDTO);
     }
 
-
     @Test
     @DisplayName("createFriend returns 409 Conflict when EmailAlreadyRegisteredException is thrown")
     void createFriend_ReturnsConflict_WhenEmailAlreadyRegisteredExceptionThrown() {
