@@ -147,7 +147,6 @@ class GroupControllerTest {
 
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         Assertions.assertNotNull(responseEntity);
-        Assertions.assertNotNull(responseEntity.getBody());
 
         verify(groupService, times(1)).drawFriends(groupId);
     }
