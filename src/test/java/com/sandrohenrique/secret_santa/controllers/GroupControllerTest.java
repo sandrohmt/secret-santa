@@ -80,6 +80,8 @@ public class GroupControllerTest {
     @Test
     @DisplayName("createGroup return Group with status 201 when successful")
     void createGroup_ReturnGroupWithStatus201_WhenSuccessful() {
+        Set<Long> friendIds = Set.of(1L, 2L);
+
         LocalDate eventDate = LocalDate.of(2024, 12, 20);
         GroupDTO groupDTO = new GroupDTO("Natal em família", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, friendIds);
         Group expectedGroup = new Group(groupDTO);
