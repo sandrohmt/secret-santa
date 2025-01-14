@@ -35,11 +35,14 @@ public class GroupControllerTest {
     @Test
     @DisplayName("findGroupById returns a Group when successful")
     void findGroupById_ReturnGroup_WhenSuccessful() {
+        Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
+        Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
+        List<Friend> friends = List.of(friend1, friend2);
+
         Long groupId = 1L;
         LocalDate eventDate = LocalDate.of(2024, 12, 20);
-        Group expectedGroup = new Group(groupId, "Amigo Secreto de Fim de Ano", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, Set.of(1L,2L,3L), false);
-
-        when(groupService.findGroupById(groupId)).thenReturn(expectedGroup);
+        GroupWithFriendsDTO expectedDTO = new GroupWithFriendsDTO(groupId, "Amigo Secreto de Fim de Ano", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, friends);
+        when(groupService.findGroupWithFriendsById(groupId)).thenReturn(expectedDTO);
 
         ResponseEntity<GroupWithFriendsDTO> responseEntity = groupController.findGroupById(groupId);
 
@@ -48,5 +51,3 @@ public class GroupControllerTest {
         Assertions.assertNotNull(responseEntity.getBody());
     }
 }
-
-//Generated with love by TestMe :) Please raise issues & feature requests at: https://weirddev.com/forum#!/testme
