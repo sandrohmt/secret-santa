@@ -156,8 +156,7 @@ public class GroupService {
 // Mudar a estrutura do banco de dados, acho que friend e group deveriam ser (1:n), grupo pode ter varios amigos e um amigo so pode pertencer a um grupo. ai coloca mais um atributo em friend que seria groupId como fk
 // Talvez colocar LocalDateTime em vez de LocalDate, pra dizer o horario do evento tambem
 // Criar um Service compartilhado e colocar os métodos de GroupService que injetam FriendService e colocar o deleteFriends la, ou só colocar o metodo de deleteFriend mesmo, e fazer os testes desse service novo
-// SpringWebMVC
+// Talvez criar um classe com método pra criar amigos em vez de ficar criando dentro de cada teste
 // delete group
-// dockerizar
 // documentar com o swagger
 // Pesquisar stateful e stateless, csrf, bean e migrations

@@ -447,6 +447,3 @@ class GroupServiceTest {
         );
     }
 }
-
-// Ver o teste que nao tava rodando
-// Tem que aprender a testar os controllers
