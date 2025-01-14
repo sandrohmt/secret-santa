@@ -2,10 +2,10 @@ package com.sandrohenrique.secret_santa.controllers;
 
 import com.sandrohenrique.secret_santa.domain.Friend;
 import com.sandrohenrique.secret_santa.domain.Group;
-import com.sandrohenrique.secret_santa.dtos.FriendDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupFriendIdsDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
+import com.sandrohenrique.secret_santa.exceptions.EntityNotFoundException;
 import com.sandrohenrique.secret_santa.services.FriendService;
 import com.sandrohenrique.secret_santa.services.GroupService;
 import org.junit.jupiter.api.Assertions;
@@ -13,13 +13,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -56,6 +54,23 @@ class GroupControllerTest {
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         Assertions.assertNotNull(responseEntity);
         Assertions.assertNotNull(responseEntity.getBody());
+    }
+
+    @Test
+    @DisplayName("findGroupById returns 404 not found when EntityNotFoundException is thrown")
+    void findGroupById_ReturnsNotFound_WhenEntityNotFoundExceptionThrown() {
+        doThrow(new EntityNotFoundException("Grupo com ID fornecido não encontrado!"))
+                .when(groupService.findGroupById(1L));
+
+        ResponseEntity<Void> response = null;
+        try {
+            groupController.findGroupById(1L);
+        } catch (EntityNotFoundException e) {
+        response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
