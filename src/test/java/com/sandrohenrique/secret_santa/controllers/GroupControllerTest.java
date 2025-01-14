@@ -33,8 +33,8 @@ public class GroupControllerTest {
     GroupService groupService;
 
     @Test
-    @DisplayName("findGroupById returns a Group when successful")
-    void findGroupById_ReturnGroup_WhenSuccessful() {
+    @DisplayName("findGroupById returns a Group with status 200 when successful")
+    void findGroupById_ReturnGroupWithStatus200_WhenSuccessful() {
         Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
         Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
         List<Friend> friends = List.of(friend1, friend2);
@@ -53,8 +53,8 @@ public class GroupControllerTest {
     }
 
     @Test
-    @DisplayName("findGroupByName returns a Group when successful")
-    void findGroupByName_ReturnGroup_WhenSuccessful() {
+    @DisplayName("findGroupByName returns a Group with status 200 when successful")
+    void findGroupByName_ReturnGroupWithStatus200_WhenSuccessful() {
         Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
         Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
         List<Friend> friends = List.of(friend1, friend2);
