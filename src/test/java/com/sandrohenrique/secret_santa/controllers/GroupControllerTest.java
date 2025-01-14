@@ -42,6 +42,7 @@ public class GroupControllerTest {
         Long groupId = 1L;
         LocalDate eventDate = LocalDate.of(2024, 12, 20);
         GroupWithFriendsDTO expectedDTO = new GroupWithFriendsDTO(groupId, "Amigo Secreto de Fim de Ano", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, friends);
+
         when(groupService.findGroupWithFriendsById(groupId)).thenReturn(expectedDTO);
 
         ResponseEntity<GroupWithFriendsDTO> responseEntity = groupController.findGroupById(groupId);
