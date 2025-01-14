@@ -150,4 +150,27 @@ class GroupControllerTest {
 
         verify(groupService, times(1)).drawFriends(groupId);
     }
+
+    @Test
+    @DisplayName("deleteFriendsInGroup delete Friends from Group with status 204 when successful")
+    void deleteFriendsInGroup_DeleteFriendsFromGroupWithStatus204_WhenSuccessful() {
+        Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
+        Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
+
+        Long groupId = 1L;
+        LocalDate eventDate = LocalDate.of(2024, 12, 20);
+        Group expectedGroup = new Group(groupId, "Amigo Secreto de Fim de Ano", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, new HashSet<>(Set.of(1L, 2L)), false);
+
+        GroupFriendIdsDTO data = new GroupFriendIdsDTO(groupId, Set.of(friend1.getId(), friend2.getId()));
+
+        when(groupService.findGroupById(groupId)).thenReturn(expectedGroup);
+
+        ResponseEntity<Void> responseEntity = groupController.deleteFriendsInGroup(data);
+
+        Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        Assertions.assertNotNull(responseEntity);
+
+        verify(groupService, times(1)).deleteFriendsInGroup(data);
+
+    }
 }
