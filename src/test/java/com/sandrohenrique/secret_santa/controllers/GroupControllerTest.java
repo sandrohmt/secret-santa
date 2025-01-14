@@ -6,6 +6,7 @@ import com.sandrohenrique.secret_santa.dtos.FriendDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupFriendIdsDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
+import com.sandrohenrique.secret_santa.services.FriendService;
 import com.sandrohenrique.secret_santa.services.GroupService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -19,19 +20,23 @@ import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class GroupControllerTest {
+class GroupControllerTest {
 
     @InjectMocks
     GroupController groupController;
 
     @Mock
     GroupService groupService;
+
+    @Mock
+    FriendService friendService;
 
     @Test
     @DisplayName("findGroupById returns a Group with status 200 when successful")
@@ -96,5 +101,31 @@ public class GroupControllerTest {
         Assertions.assertEquals(expectedGroup, responseEntity.getBody());
 
         verify(groupService, times(1)).createGroup(groupDTO);
+    }
+
+    @Test
+    @DisplayName("addFriendsById add friends with status 200 to group when successful")
+    void addFriendsById_AddFriendsToGroupWithStatus200_WhenSuccessful() {
+        Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
+        Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
+        Set<Long> friendIds = Set.of(1L, 2L);
+
+        Long groupId = 1L;
+        LocalDate eventDate = LocalDate.of(2024, 12, 20);
+        Group expectedGroup = new Group(groupId, "Amigo Secreto de Fim de Ano", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, new HashSet<>(), false);
+
+        GroupFriendIdsDTO data = new GroupFriendIdsDTO(groupId, friendIds);
+
+        when(groupService.findGroupById(groupId)).thenReturn(expectedGroup);
+        when(friendService.findFriendById(1L)).thenReturn(friend1);
+        when(friendService.findFriendById(2L)).thenReturn(friend2);
+
+        ResponseEntity<String> responseEntity = groupController.addFriendsById(data);
+
+        Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        Assertions.assertNotNull(responseEntity);
+        Assertions.assertNotNull(responseEntity.getBody());
+
+        verify(groupService, times(1)).addFriendsById(data);
     }
 }
