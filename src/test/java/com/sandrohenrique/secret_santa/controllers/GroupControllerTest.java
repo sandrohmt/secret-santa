@@ -6,6 +6,7 @@ import com.sandrohenrique.secret_santa.dtos.GroupDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupFriendIdsDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
 import com.sandrohenrique.secret_santa.exceptions.EntityNotFoundException;
+import com.sandrohenrique.secret_santa.exceptions.InsufficientFriendsException;
 import com.sandrohenrique.secret_santa.services.FriendService;
 import com.sandrohenrique.secret_santa.services.GroupService;
 import org.junit.jupiter.api.Assertions;
@@ -163,6 +164,29 @@ class GroupControllerTest {
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         Assertions.assertNotNull(responseEntity);
         Assertions.assertNotNull(responseEntity.getBody());
+
+        verify(groupService, times(1)).addFriendsById(data);
+    }
+
+    @Test
+    @DisplayName("addFriendsById returns 400 bad request when InsufficientFriendsException is thrown")
+    void addFriendsById_ReturnsBadRequest_WhenInsufficientFriendsExceptionn() {
+        Long groupId = 1L;
+
+        GroupFriendIdsDTO data = new GroupFriendIdsDTO(groupId, Set.of());
+
+        doThrow(new EntityNotFoundException("Adicione pelo menos um amigo!"))
+                .when(groupService).addFriendsById(data);
+
+        ResponseEntity<Void> response = null;
+        try {
+            groupController.addFriendsById(data);
+        } catch (InsufficientFriendsException e) {
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
         verify(groupService, times(1)).addFriendsById(data);
     }
