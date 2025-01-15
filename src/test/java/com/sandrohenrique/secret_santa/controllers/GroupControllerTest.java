@@ -6,6 +6,7 @@ import com.sandrohenrique.secret_santa.dtos.GroupDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupFriendIdsDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
 import com.sandrohenrique.secret_santa.exceptions.EntityNotFoundException;
+import com.sandrohenrique.secret_santa.exceptions.FriendAlreadyInGroupException;
 import com.sandrohenrique.secret_santa.exceptions.InsufficientFriendsException;
 import com.sandrohenrique.secret_santa.services.FriendService;
 import com.sandrohenrique.secret_santa.services.GroupService;
@@ -182,6 +183,32 @@ class GroupControllerTest {
         try {
             groupController.addFriendsById(data);
         } catch (InsufficientFriendsException e) {
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        verify(groupService, times(1)).addFriendsById(data);
+    }
+
+    @Test
+    @DisplayName("addFriendsById returns 400 bad request when FriendAlreadyInGroupException is thrown")
+    void addFriendsById_ReturnsBadRequest_WhenFriendAlreadyInGroupException() {
+        Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
+        Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
+
+        Long groupId = 1L;
+
+        GroupFriendIdsDTO data = new GroupFriendIdsDTO(groupId, Set.of(friend1.getId(), friend2.getId()));
+
+        doThrow(new FriendAlreadyInGroupException("Amigo já pertence a esse grupo!"))
+                .when(groupService).addFriendsById(data);
+
+        ResponseEntity<Void> response = null;
+        try {
+            groupController.addFriendsById(data);
+        } catch (FriendAlreadyInGroupException e) {
             response = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
