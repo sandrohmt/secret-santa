@@ -5,10 +5,7 @@ import com.sandrohenrique.secret_santa.domain.Group;
 import com.sandrohenrique.secret_santa.dtos.GroupDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupFriendIdsDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
-import com.sandrohenrique.secret_santa.exceptions.EntityNotFoundException;
-import com.sandrohenrique.secret_santa.exceptions.FriendAlreadyInGroupException;
-import com.sandrohenrique.secret_santa.exceptions.GroupAlreadyDrawnException;
-import com.sandrohenrique.secret_santa.exceptions.InsufficientFriendsException;
+import com.sandrohenrique.secret_santa.exceptions.*;
 import com.sandrohenrique.secret_santa.services.FriendService;
 import com.sandrohenrique.secret_santa.services.GroupService;
 import org.junit.jupiter.api.Assertions;
@@ -301,6 +298,29 @@ class GroupControllerTest {
 
         Assertions.assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
         Assertions.assertNotNull(responseEntity);
+
+        verify(groupService, times(1)).deleteFriendsInGroup(data);
+    }
+
+    @Test
+    @DisplayName("deleteFriendsInGroup returns 400 bad request when FriendNotInGroupException is thrown")
+    void deleteFriendsInGroup_ReturnsBadRequest_WhenFriendNotInGroupException() {
+        Long groupId = 1L;
+
+        GroupFriendIdsDTO data = new GroupFriendIdsDTO(groupId, Set.of(1L));
+
+        doThrow(new FriendNotInGroupException("O amigo com o ID fornecido não faz parte do grupo especificado."))
+                .when(groupService).deleteFriendsInGroup(data);
+
+        ResponseEntity<Void> response = null;
+        try {
+            groupController.deleteFriendsInGroup(data);
+        } catch (FriendNotInGroupException e) {
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
         verify(groupService, times(1)).deleteFriendsInGroup(data);
     }
