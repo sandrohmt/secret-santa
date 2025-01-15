@@ -102,14 +102,14 @@ class GroupControllerTest {
     @Test
     @DisplayName("findGroupByName returns 404 not found when EntityNotFoundException is thrown")
     void findGroupByName_ReturnsNotFound_WhenEntityNotFoundExceptionThrown() {
-        Long id = 1L;
+        String groupName = "Amigo Secreto de Fim de Ano";
 
         doThrow(new EntityNotFoundException("Grupo com ID fornecido não encontrado!"))
-                .when(groupService).findGroupWithFriendsById(id);
+                .when(groupService).findGroupWithFriendsByName(groupName);
 
         ResponseEntity<Void> response = null;
         try {
-            groupController.findGroupById(id);
+            groupController.findGroupByName(groupName);
         } catch (EntityNotFoundException e) {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -117,7 +117,7 @@ class GroupControllerTest {
         Assertions.assertNotNull(response);
         Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
 
-        verify(groupService, times(1)).findGroupWithFriendsById(id);
+        verify(groupService, times(1)).findGroupWithFriendsByName(groupName);
     }
 
     @Test
