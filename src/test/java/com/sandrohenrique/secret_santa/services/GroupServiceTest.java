@@ -66,24 +66,6 @@ class GroupServiceTest {
         Assertions.assertEquals(friendIds, group.getFriendIds());
     }
 
-//    @Test // Consertar esse teste, talvez tenha que mudar a implementação do createGroup.
-//    @DisplayName("createGroup throws EntityNotFoundException when Friend id is not found")
-//    void createGroup_ThrowEntityNotFoundException_WhenFriendIdIsNotFound() {
-//        Set<Long> ids = Set.of(1L, 2L);
-//
-//        LocalDate eventDate = LocalDate.of(2024, 12, 20);
-//        GroupDTO groupDTO = new GroupDTO("Natal em família", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, ids);
-//
-//        when(friendRepository.findById(1L)).thenReturn(Optional.of(new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5"), null)));
-//        when(friendRepository.findById(2L)).thenReturn(Optional.empty());
-//
-//        EntityNotFoundException thrown = Assertions.assertThrows(EntityNotFoundException.class, () -> groupService.createGroup(groupDTO));
-//
-//        Assertions.assertEquals("Amigo com ID fornecido não encontrado!", thrown.getMessage());
-//
-//        verify(groupRepository, never()).save(any(Group.class));
-//    }
-
     @Test
     @DisplayName("findGroupById returns a Group when successful")
     void findGroupById_ReturnGroup_WhenSuccessful() {
