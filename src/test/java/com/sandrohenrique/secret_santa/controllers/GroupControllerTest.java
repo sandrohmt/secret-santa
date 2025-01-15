@@ -59,14 +59,12 @@ class GroupControllerTest {
     @Test
     @DisplayName("findGroupById returns 404 not found when EntityNotFoundException is thrown")
     void findGroupById_ReturnsNotFound_WhenEntityNotFoundExceptionThrown() {
-        Long id = 1L;
-
         doThrow(new EntityNotFoundException("Grupo com ID fornecido não encontrado!"))
-                .when(groupService).findGroupWithFriendsById(id);
+                .when(groupService).findGroupWithFriendsById(1L);
 
         ResponseEntity<Void> response = null;
         try {
-            groupController.findGroupById(id);
+            groupController.findGroupById(1L);
         } catch (EntityNotFoundException e) {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -74,7 +72,7 @@ class GroupControllerTest {
         Assertions.assertNotNull(response);
         Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
 
-        verify(groupService, times(1)).findGroupWithFriendsById(id);
+        verify(groupService, times(1)).findGroupWithFriendsById(1L);
     }
 
     @Test
@@ -99,6 +97,27 @@ class GroupControllerTest {
         Assertions.assertNotNull(responseEntity.getBody());
         Assertions.assertEquals(DTOList, responseEntity.getBody());
         Assertions.assertEquals(DTOList.size(), responseEntity.getBody().size());
+    }
+
+    @Test
+    @DisplayName("findGroupByName returns 404 not found when EntityNotFoundException is thrown")
+    void findGroupByName_ReturnsNotFound_WhenEntityNotFoundExceptionThrown() {
+        Long id = 1L;
+
+        doThrow(new EntityNotFoundException("Grupo com ID fornecido não encontrado!"))
+                .when(groupService).findGroupWithFriendsById(id);
+
+        ResponseEntity<Void> response = null;
+        try {
+            groupController.findGroupById(id);
+        } catch (EntityNotFoundException e) {
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
+        verify(groupService, times(1)).findGroupWithFriendsById(id);
     }
 
     @Test
