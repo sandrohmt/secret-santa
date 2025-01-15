@@ -7,6 +7,7 @@ import com.sandrohenrique.secret_santa.dtos.GroupFriendIdsDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
 import com.sandrohenrique.secret_santa.exceptions.EntityNotFoundException;
 import com.sandrohenrique.secret_santa.exceptions.FriendAlreadyInGroupException;
+import com.sandrohenrique.secret_santa.exceptions.GroupAlreadyDrawnException;
 import com.sandrohenrique.secret_santa.exceptions.InsufficientFriendsException;
 import com.sandrohenrique.secret_santa.services.FriendService;
 import com.sandrohenrique.secret_santa.services.GroupService;
@@ -236,6 +237,27 @@ class GroupControllerTest {
 
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         Assertions.assertNotNull(responseEntity);
+
+        verify(groupService, times(1)).drawFriends(groupId);
+    }
+
+    @Test
+    @DisplayName("drawFriends returns 400 bad request when GroupAlreadyDrawnException is thrown")
+    void drawFriends_ReturnsBadRequest_WhenGroupAlreadyDrawnException() {
+        Long groupId = 1L;
+
+        doThrow(new GroupAlreadyDrawnException("Grupo já foi sorteado!"))
+                .when(groupService).drawFriends(groupId);
+
+        ResponseEntity<Void> response = null;
+        try {
+            groupController.drawFriends(groupId);
+        } catch (GroupAlreadyDrawnException e) {
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
         verify(groupService, times(1)).drawFriends(groupId);
     }
