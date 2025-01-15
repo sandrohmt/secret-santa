@@ -263,6 +263,27 @@ class GroupControllerTest {
     }
 
     @Test
+    @DisplayName("drawFriends returns 400 bad request when InsufficientFriendsException is thrown")
+    void drawFriends_ReturnsBadRequest_WhenInsufficientFriendsException() {
+        Long groupId = 1L;
+
+        doThrow(new InsufficientFriendsException("É necessário pelo menos 3 amigos para realizar o sorteio!"))
+                .when(groupService).drawFriends(groupId);
+
+        ResponseEntity<Void> response = null;
+        try {
+            groupController.drawFriends(groupId);
+        } catch (InsufficientFriendsException e) {
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        verify(groupService, times(1)).drawFriends(groupId);
+    }
+
+    @Test
     @DisplayName("deleteFriendsInGroup delete Friends from Group with status 204 when successful")
     void deleteFriendsInGroup_DeleteFriendsFromGroupWithStatus204_WhenSuccessful() {
         Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
