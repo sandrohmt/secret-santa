@@ -170,19 +170,19 @@ class GroupControllerTest {
 
     @Test
     @DisplayName("addFriendsById returns 400 bad request when InsufficientFriendsException is thrown")
-    void addFriendsById_ReturnsBadRequest_WhenInsufficientFriendsExceptionn() {
+    void addFriendsById_ReturnsBadRequest_WhenInsufficientFriendsException() {
         Long groupId = 1L;
 
         GroupFriendIdsDTO data = new GroupFriendIdsDTO(groupId, Set.of());
 
-        doThrow(new EntityNotFoundException("Adicione pelo menos um amigo!"))
+        doThrow(new InsufficientFriendsException("Adicione pelo menos um amigo!"))
                 .when(groupService).addFriendsById(data);
 
         ResponseEntity<Void> response = null;
         try {
             groupController.addFriendsById(data);
         } catch (InsufficientFriendsException e) {
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
         Assertions.assertNotNull(response);
