@@ -39,16 +39,37 @@ class GroupControllerIT {
     @Autowired
     UserRepository userRepository;
 
+    private static final User ADMIN = User.builder()
+            .login("sandrohmt")
+            .password("$2a$10$AXpQy1qlGN7O0snJy5MnZuwu6QIVsn2G4tRJwPtmqU4KYGIDCCVBW")
+            .role(UserRole.ADMIN)
+            .build();
+
+    private static final User USER = User.builder()
+            .login("sandrohmtUser")
+            .password("$2a$10$QMRJfqF6rOhOFES0LCzgkOHcoECrG0Isg6n2T5PivUs6pkcI1v73i")
+            .role(UserRole.USER)
+            .build();
+
     @TestConfiguration
     @Lazy
     static class Config {
-        @Bean(name = "testRestTemplateRoleUserCreator")
-        public TestRestTemplate testRestTemplateRoleUserCreator(@Value("${local.server.port}") int port) {
+        @Bean(name = "testRestTemplateRoleAdmin")
+        public TestRestTemplate testRestTemplateRoleAdminCreator(@Value("${local.server.port}") int port) {
             RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
-                    .rootUri("http://localhost" + port)
+                    .rootUri("http://localhost:" + port)
                     .basicAuthentication("sandrohmt", "$2a$10$AXpQy1qlGN7O0snJy5MnZuwu6QIVsn2G4tRJwPtmqU4KYGIDCCVBW");
             return new TestRestTemplate(restTemplateBuilder);
         }
+
+        @Bean(name = "testRestTemplateRoleUser")
+        public TestRestTemplate testRestTemplateRoleUserCreator(@Value("${local.server.port}") int port) {
+            RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
+                    .rootUri("http://localhost:" + port)
+                    .basicAuthentication("sandrohmtUser", "$2a$10$QMRJfqF6rOhOFES0LCzgkOHcoECrG0Isg6n2T5PivUs6pkcI1v73i");
+            return new TestRestTemplate(restTemplateBuilder);
+        }
+
     }
 
     @Test
@@ -58,12 +79,7 @@ class GroupControllerIT {
         Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
         List<Friend> friends = List.of(friend1, friend2);
 
-        User user = User.builder()
-                .login("sandrohmt")
-                .password("$2a$10$AXpQy1qlGN7O0snJy5MnZuwu6QIVsn2G4tRJwPtmqU4KYGIDCCVBW")
-                .role(UserRole.USER)
-                .build();
-        userRepository.save(user);
+
 
         Long groupId = 1L;
         LocalDate eventDate = LocalDate.of(2024, 12, 20);
