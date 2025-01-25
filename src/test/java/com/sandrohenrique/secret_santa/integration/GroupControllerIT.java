@@ -44,13 +44,13 @@ class GroupControllerIT {
 
     private static final User ADMIN = User.builder()
             .login("sandrohenrique")
-            .password("{bcrypt}$2a$10$DbkXIBeObK76JtvYfR0Ss.2m3K67Ku6WXF3LRPc9pfm6bQpb2UAIm")
+            .password("$2a$10$DbkXIBeObK76JtvYfR0Ss.2m3K67Ku6WXF3LRPc9pfm6bQpb2UAIm")
             .role(UserRole.ADMIN)
             .build();
 
     private static final User USER = User.builder()
-            .login("sandrohmtUser")
-            .password("{bcrypt}2a$10$QMRJfqF6rOhOFES0LCzgkOHcoECrG0Isg6n2T5PivUs6pkcI1v73i")
+            .login("sandrohmtuser")
+            .password("2a$10$QMRJfqF6rOhOFES0LCzgkOHcoECrG0Isg6n2T5PivUs6pkcI1v73i")
             .role(UserRole.USER)
             .build();
 
@@ -61,7 +61,7 @@ class GroupControllerIT {
         public TestRestTemplate testRestTemplateRoleAdminCreator(@Value("${local.server.port}") int port) {
             RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
                     .rootUri("http://localhost:" + port)
-                    .basicAuthentication("sandrohmt", "1234");
+                    .basicAuthentication("sandrohenrique", "1234");
             return new TestRestTemplate(restTemplateBuilder);
         }
 
@@ -69,7 +69,7 @@ class GroupControllerIT {
         public TestRestTemplate testRestTemplateRoleUserCreator(@Value("${local.server.port}") int port) {
             RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
                     .rootUri("http://localhost:" + port)
-                    .basicAuthentication("sandrohmtUser", "123456789");
+                    .basicAuthentication("sandrohmtuser", "123456789");
             return new TestRestTemplate(restTemplateBuilder);
         }
 
@@ -79,6 +79,7 @@ class GroupControllerIT {
     @DisplayName("findGroupById returns a Group with status 200 when successful")
     void findGroupById_ReturnGroupWithStatus200_WhenSuccessful() {
         userRepository.save(ADMIN);
+        userRepository.save(USER);
 
         Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
         Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
@@ -90,7 +91,7 @@ class GroupControllerIT {
         LocalDate eventDate = LocalDate.of(2024, 12, 20);
         GroupWithFriendsDTO expectedDTO = new GroupWithFriendsDTO(groupId, "Amigo Secreto de Fim de Ano", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, friends);
 
-        ResponseEntity<GroupWithFriendsDTO> response = testRestTemplateRoleAdmin.getForEntity("/groups/by-id/{id}", GroupWithFriendsDTO.class, groupId);
+        ResponseEntity<GroupWithFriendsDTO> response = testRestTemplateRoleUser.getForEntity("/groups/by-id/{id}", GroupWithFriendsDTO.class, groupId);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertNotNull(response);
