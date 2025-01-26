@@ -43,8 +43,8 @@ class GroupControllerIT {
     private UserRepository userRepository;
 
     private static final User ADMIN = User.builder()
-            .login("sandrohenrique")
-            .password("$2a$10$DbkXIBeObK76JtvYfR0Ss.2m3K67Ku6WXF3LRPc9pfm6bQpb2UAIm")
+            .login("adm")
+            .password("$2a$10$BKXeW45W8RxLK7tNQyJu/.LCehNVP7yzMVQc1AasShugfy5wkNU4W")
             .role(UserRole.ADMIN)
             .build();
 
@@ -61,7 +61,7 @@ class GroupControllerIT {
         public TestRestTemplate testRestTemplateRoleAdminCreator(@Value("${local.server.port}") int port) {
             RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
                     .rootUri("http://localhost:" + port)
-                    .basicAuthentication("sandrohenrique", "1234");
+                    .basicAuthentication("adm", "1234");
             return new TestRestTemplate(restTemplateBuilder);
         }
 
@@ -78,11 +78,11 @@ class GroupControllerIT {
     @Test
     @DisplayName("findGroupById returns a Group with status 200 when successful")
     void findGroupById_ReturnGroupWithStatus200_WhenSuccessful() {
-        userRepository.save(USER);
+        userRepository.save(ADMIN);
 
         Long groupId = 1L;
 
-        ResponseEntity<GroupWithFriendsDTO> response = testRestTemplateRoleUser.getForEntity("/groups/by-id/{id}", GroupWithFriendsDTO.class, groupId);
+        ResponseEntity<GroupWithFriendsDTO> response = testRestTemplateRoleAdmin.getForEntity("/groups/by-id/{id}", GroupWithFriendsDTO.class, groupId);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertNotNull(response);

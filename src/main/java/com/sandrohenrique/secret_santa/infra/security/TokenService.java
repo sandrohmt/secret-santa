@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.sandrohenrique.secret_santa.domain.user.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,10 @@ public class TokenService {
     private String secret;
 
     public String generateToken(User user) {
+        if (user == null || user.getLogin() == null) {
+            throw new IllegalArgumentException("Login invalido");
+        }
+
         try{
             Algorithm algorithm = Algorithm.HMAC256(secret);
             String token = JWT.create()
@@ -33,6 +38,7 @@ public class TokenService {
 
     public String validateToken(String token) {
         try {
+            System.out.println("Token" + token);
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
                     .withIssuer("secret-santa")
@@ -40,7 +46,7 @@ public class TokenService {
                     .verify(token)
                     .getSubject();
         } catch (JWTVerificationException exception) {
-            return null;
+            throw new RuntimeException("Erro ao validar o token: " + exception.getMessage(), exception);
         }
     }
 
