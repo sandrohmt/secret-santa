@@ -4,6 +4,7 @@ import com.sandrohenrique.secret_santa.domain.Friend;
 import com.sandrohenrique.secret_santa.domain.user.User;
 import com.sandrohenrique.secret_santa.domain.user.UserRole;
 import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
+import com.sandrohenrique.secret_santa.infra.security.TokenService;
 import com.sandrohenrique.secret_santa.repositories.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +19,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -41,6 +44,9 @@ class GroupControllerIT {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    TokenService tokenService;
 
     private static final User ADMIN = User.builder()
             .login("adm")
@@ -80,7 +86,15 @@ class GroupControllerIT {
     void findGroupById_ReturnGroupWithStatus200_WhenSuccessful() {
         userRepository.save(ADMIN);
 
+        User mockUser = new User("adm", "1234", UserRole.ADMIN);
+        String token = tokenService.generateToken(mockUser);
+
         Long groupId = 1L;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+
+        HttpEntity<Void> httpEntity = new HttpEntity<>(headers);
 
         ResponseEntity<GroupWithFriendsDTO> response = testRestTemplateRoleAdmin.getForEntity("/groups/by-id/{id}", GroupWithFriendsDTO.class, groupId);
 
