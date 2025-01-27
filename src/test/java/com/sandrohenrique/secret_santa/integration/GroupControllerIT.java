@@ -19,8 +19,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -46,7 +44,7 @@ class GroupControllerIT {
     private UserRepository userRepository;
 
     @Autowired
-    TokenService tokenService;
+    private TokenService tokenService;
 
     private static final User ADMIN = User.builder()
             .login("adm")
@@ -64,43 +62,47 @@ class GroupControllerIT {
     @TestConfiguration
     static class Config {
         @Bean(name = "testRestTemplateRoleAdmin")
-        public TestRestTemplate testRestTemplateRoleAdminCreator(@Value("${local.server.port}") int port) {
+        public TestRestTemplate testRestTemplateRoleAdminCreator(@Value("${local.server.port}") int port, TokenService tokenService, UserRepository userRepository) {
+            User admin = userRepository.save(new User("adm", "1234", UserRole.ADMIN));
+
+            String jwtToken = tokenService.generateToken(admin);
+
             RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
                     .rootUri("http://localhost:" + port)
-                    .basicAuthentication("adm", "1234");
+                    .defaultHeader("Authorization", "Bearer " + jwtToken);
             return new TestRestTemplate(restTemplateBuilder);
         }
 
         @Bean(name = "testRestTemplateRoleUser")
-        public TestRestTemplate testRestTemplateRoleUserCreator(@Value("${local.server.port}") int port) {
+        public TestRestTemplate testRestTemplateRoleUserCreator(@Value("${local.server.port}") int port, TokenService tokenService, UserRepository userRepository) {
+            User user = userRepository.save(new User("sandrohmtuser", "123456789", UserRole.USER));
+
+            String jwtToken = tokenService.generateToken(user);
+
             RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
                     .rootUri("http://localhost:" + port)
-                    .basicAuthentication("sandrohmtuser", "123456789");
+                    .defaultHeader("Authorization", "Bearer " + jwtToken);
             return new TestRestTemplate(restTemplateBuilder);
         }
-
     }
 
     @Test
     @DisplayName("findGroupById returns a Group with status 200 when successful")
     void findGroupById_ReturnGroupWithStatus200_WhenSuccessful() {
         userRepository.save(ADMIN);
+        Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
+        Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
+        List<Friend> friends = List.of(friend1, friend2);
 
-        User mockUser = new User("adm", "1234", UserRole.ADMIN);
-        String token = tokenService.generateToken(mockUser);
 
         Long groupId = 1L;
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + token);
-
-        HttpEntity<Void> httpEntity = new HttpEntity<>(headers);
+        LocalDate eventDate = LocalDate.of(2024, 12, 20);
+        new GroupWithFriendsDTO(groupId, "Amigo Secreto de Fim de Ano", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, friends);
 
         ResponseEntity<GroupWithFriendsDTO> response = testRestTemplateRoleAdmin.getForEntity("/groups/by-id/{id}", GroupWithFriendsDTO.class, groupId);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertNotNull(response);
         Assertions.assertNotNull(response.getBody());
-
     }
 }
