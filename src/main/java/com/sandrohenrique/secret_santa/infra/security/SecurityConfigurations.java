@@ -1,6 +1,7 @@
 package com.sandrohenrique.secret_santa.infra.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -37,6 +38,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.DELETE, "/groups/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/friends/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/friends/**").hasAuthority("ADMIN")
+                        .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
