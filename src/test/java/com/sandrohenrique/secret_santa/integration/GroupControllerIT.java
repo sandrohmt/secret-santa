@@ -7,6 +7,7 @@ import com.sandrohenrique.secret_santa.domain.user.UserRole;
 import com.sandrohenrique.secret_santa.dtos.GroupDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
 import com.sandrohenrique.secret_santa.infra.security.TokenService;
+import com.sandrohenrique.secret_santa.repositories.FriendRepository;
 import com.sandrohenrique.secret_santa.repositories.UserRepository;
 import com.sandrohenrique.secret_santa.services.GroupService;
 import org.junit.jupiter.api.Assertions;
@@ -51,6 +52,9 @@ class GroupControllerIT {
 
     @Autowired
     private GroupService groupService;
+
+    @Autowired
+    private FriendRepository friendRepository;
 
     private static final User ADMIN = User.builder()
             .login("adm")
@@ -115,9 +119,11 @@ class GroupControllerIT {
     @DisplayName("createGroup return Group with status 201 when successful")
     void createGroup_ReturnGroupWithStatus201_WhenSuccessful() {
         userRepository.save(ADMIN);
-
-        Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
-        Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
+        
+        Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), 2L);
+        Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), 1L);
+        friendRepository.save(friend1);
+        friendRepository.save(friend2);
         Set<Long> friendIds = Set.of(1L, 2L);
 
         LocalDate eventDate = LocalDate.of(2024, 12, 20);
