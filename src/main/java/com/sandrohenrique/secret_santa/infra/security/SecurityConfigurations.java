@@ -38,6 +38,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.DELETE, "/groups/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/friends/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/friends/**").hasAuthority("ADMIN")
+                        .requestMatchers("actuator/**").permitAll()
                         .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
                         .anyRequest().authenticated()
                 )
