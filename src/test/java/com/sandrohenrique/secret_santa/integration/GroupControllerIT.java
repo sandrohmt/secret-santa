@@ -1,11 +1,14 @@
 package com.sandrohenrique.secret_santa.integration;
 
 import com.sandrohenrique.secret_santa.domain.Friend;
+import com.sandrohenrique.secret_santa.domain.Group;
 import com.sandrohenrique.secret_santa.domain.user.User;
 import com.sandrohenrique.secret_santa.domain.user.UserRole;
+import com.sandrohenrique.secret_santa.dtos.GroupDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
 import com.sandrohenrique.secret_santa.infra.security.TokenService;
 import com.sandrohenrique.secret_santa.repositories.UserRepository;
+import com.sandrohenrique.secret_santa.services.GroupService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,6 +28,9 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
+
+import static org.mockito.Mockito.*;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -42,6 +48,9 @@ class GroupControllerIT {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private GroupService groupService;
 
     private static final User ADMIN = User.builder()
             .login("adm")
@@ -101,4 +110,30 @@ class GroupControllerIT {
         Assertions.assertNotNull(response);
         Assertions.assertNotNull(response.getBody());
     }
+
+    @Test
+    @DisplayName("createGroup return Group with status 201 when successful")
+    void createGroup_ReturnGroupWithStatus201_WhenSuccessful() {
+        userRepository.save(ADMIN);
+
+        Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
+        Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
+        Set<Long> friendIds = Set.of(1L, 2L);
+
+        LocalDate eventDate = LocalDate.of(2024, 12, 20);
+        GroupDTO groupDTO = new GroupDTO("Natal em família", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, friendIds);
+        Group expectedGroup = new Group(groupDTO);
+
+        when(groupService.createGroup(groupDTO)).thenReturn(expectedGroup);
+
+        ResponseEntity<GroupWithFriendsDTO> response = testRestTemplateRoleAdmin.postForEntity("/groups/createGroup", groupDTO, GroupWithFriendsDTO.class);
+
+        Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        Assertions.assertNotNull(response);
+        Assertions.assertNotNull(response.getBody());
+        Assertions.assertEquals(expectedGroup, response.getBody());
+
+        verify(groupService, times(1)).createGroup(groupDTO);
+    }
+
 }
