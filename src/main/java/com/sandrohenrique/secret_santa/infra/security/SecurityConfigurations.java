@@ -40,7 +40,6 @@ public class SecurityConfigurations {
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class) // verificar o token antes dos requestMatchers,
                 .build();
     }
 

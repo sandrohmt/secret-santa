@@ -89,7 +89,7 @@ class GroupControllerIT {
     @Test
     @DisplayName("findGroupById returns a Group with status 200 when successful")
     void findGroupById_ReturnGroupWithStatus200_WhenSuccessful() {
-        userRepository.save(USER);
+        userRepository.save(ADMIN);
         Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), null);
         Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), null);
         List<Friend> friends = List.of(friend1, friend2);
@@ -99,7 +99,7 @@ class GroupControllerIT {
         LocalDate eventDate = LocalDate.of(2024, 12, 20);
         new GroupWithFriendsDTO(groupId, "Amigo Secreto de Fim de Ano", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, friends);
 
-        ResponseEntity<GroupWithFriendsDTO> response = testRestTemplateRoleUser.getForEntity("/groups/by-id/{id}", GroupWithFriendsDTO.class, groupId);
+        ResponseEntity<GroupWithFriendsDTO> response = testRestTemplateRoleAdmin.getForEntity("/groups/by-id/{id}", GroupWithFriendsDTO.class, groupId);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertNotNull(response);
