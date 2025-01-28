@@ -43,9 +43,6 @@ class GroupControllerIT {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private TokenService tokenService;
-
     private static final User ADMIN = User.builder()
             .login("adm")
             .password("$2a$10$BKXeW45W8RxLK7tNQyJu/.LCehNVP7yzMVQc1AasShugfy5wkNU4W")
