@@ -16,7 +16,7 @@ Esta aplicação foi desenvolvida para facilitar a organização de amigos ocult
 
 - Tratamento de Erros: Respostas claras e detalhadas para requisições incorretas.
 
-#Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 - Java 17
 
