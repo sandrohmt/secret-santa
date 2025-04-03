@@ -1,15 +1,14 @@
 package com.sandrohenrique.secret_santa.domain.user;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Entity
+@Table (name = "roles")
 public class Role {
 
     @Id
@@ -22,8 +21,8 @@ public class Role {
     @AllArgsConstructor
     @Getter
     public enum Values {
-        ADMIN(1l),
-        USER(2l);
+        ADMIN(1L),
+        USER(2L);
 
         long id;
     }
