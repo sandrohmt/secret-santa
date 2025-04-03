@@ -14,7 +14,7 @@ import java.util.Set;
 @Builder
 public class User { // Vem de dentro do Spring Security e é usada pra identificar uma classe que represente um usuário que vai ser autenticado na nossa aplicação
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
 
