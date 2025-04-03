@@ -1,6 +1,6 @@
 package com.sandrohenrique.secret_santa.dtos;
 
-import com.sandrohenrique.secret_santa.domain.user.UserRole;
+import com.sandrohenrique.secret_santa.domain.user.Role;
 
-public record RegisterDTO(String login, String password, UserRole role) {
+public record RegisterDTO(String login, String password, Role role) {
 }
