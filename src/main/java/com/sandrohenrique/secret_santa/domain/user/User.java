@@ -21,7 +21,7 @@ public class User { // Vem de dentro do Spring Security e é usada pra identific
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "user_id")
-    private String id;
+    private Long id;
 
     @Column(unique = true)
     private String login;
