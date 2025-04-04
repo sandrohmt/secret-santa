@@ -1,4 +1,4 @@
 package com.sandrohenrique.secret_santa.dtos;
 
-public record LoginResponseDTO(String token) {
+public record LoginResponseDTO(String accesstoken, Long expiresIn) {
 }

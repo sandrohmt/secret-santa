@@ -1,13 +1,16 @@
 package com.sandrohenrique.secret_santa.domain.user;
 
+import com.sandrohenrique.secret_santa.dtos.LoginRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Set;
 
 @Table(name = "users")
 @Entity(name = "users")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -30,4 +33,8 @@ public class User { // Vem de dentro do Spring Security e é usada pra identific
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
+
+    public boolean isLoginCorrect(LoginRequestDTO loginRequest, PasswordEncoder passwordEncoder) {
+        return passwordEncoder.matches(loginRequest.password(), this.password); // Compara a senha padrão com a senha criptogtafada
+    }
 }
