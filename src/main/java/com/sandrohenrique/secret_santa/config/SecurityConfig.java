@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -35,7 +36,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated()) // Todas as requisições precisam ser autenticadas
-                .csrf(csrf -> csrf.disable()) // Não desabilitar csrf em projetos em produção
+                .csrf(AbstractHttpConfigurer::disable) // Não desabilitar csrf em projetos em produção
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // Não vamos criar nada em sessão, vai ser tudo stateless
 
