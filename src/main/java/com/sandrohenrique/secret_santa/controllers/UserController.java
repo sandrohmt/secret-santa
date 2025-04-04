@@ -27,7 +27,7 @@ public class UserController {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
-    @PostMapping("users")
+    @PostMapping("register")
     public ResponseEntity<Void> createUser(@RequestBody  CreateUserDTO data) {
         Role userRole = roleRepository.findByName(Role.Values.USER.name());
 
