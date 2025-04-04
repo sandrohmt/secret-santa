@@ -5,6 +5,7 @@ import com.sandrohenrique.secret_santa.domain.user.User;
 import com.sandrohenrique.secret_santa.repositories.RoleRepository;
 import com.sandrohenrique.secret_santa.repositories.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.Set;
 
 @Configuration
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class AdminUserConfig implements CommandLineRunner {
 
     private RoleRepository roleRepository;
