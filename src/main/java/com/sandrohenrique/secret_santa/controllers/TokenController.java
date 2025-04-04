@@ -1,5 +1,6 @@
 package com.sandrohenrique.secret_santa.controllers;
 
+import com.sandrohenrique.secret_santa.domain.user.Role;
 import com.sandrohenrique.secret_santa.domain.user.User;
 import com.sandrohenrique.secret_santa.dtos.LoginRequestDTO;
 import com.sandrohenrique.secret_santa.dtos.LoginResponseDTO;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,11 +41,17 @@ public class TokenController {
         var now = Instant.now();
         var expiresIn = 600L;
 
+        var scopes = user.get().getRoles().
+                stream()
+                .map(Role::getName)
+                .collect(Collectors.joining(" "));
+
         var claims = JwtClaimsSet.builder() // Configurar os atributos do json
                 .issuer("mybackend")
                 .subject(user.get().getId().toString())
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(expiresIn))
+                .claim("scope", scopes)
                 .build();
 
         var jwtValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
