@@ -4,6 +4,7 @@ import com.sandrohenrique.secret_santa.domain.user.User;
 import com.sandrohenrique.secret_santa.dtos.LoginRequestDTO;
 import com.sandrohenrique.secret_santa.dtos.LoginResponseDTO;
 import com.sandrohenrique.secret_santa.repositories.UserRepository;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -24,7 +25,7 @@ public class TokenController {
 
     private final JwtEncoder jwtEncoder;
     private final UserRepository userRepository;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
     @PostMapping("login")

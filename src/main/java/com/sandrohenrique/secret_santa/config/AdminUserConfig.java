@@ -10,16 +10,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Set;
 
 @Configuration
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AdminUserConfig implements CommandLineRunner {
 
-    private RoleRepository roleRepository;
-    private UserRepository userRepository;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     @Transactional
@@ -37,6 +38,7 @@ public class AdminUserConfig implements CommandLineRunner {
                     user.setLogin("ADMIN");
                     user.setPassword(bCryptPasswordEncoder.encode("1234"));
                     user.setRoles(Set.of(roleAdmin));
+                    userRepository.save(user);
                 }
         );
     }
