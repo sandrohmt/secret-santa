@@ -24,6 +24,7 @@ public class FriendController {
     @GetMapping
     @Operation(summary = "List all friends", description = "Returns a list of all friends registered in the Secret Santa system.")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of friends.")
+    @ApiResponse(responseCode = "500", description = "Internal server error.")
     public ResponseEntity<List<Friend>> getAllFriends() {
         List<Friend> friends = friendService.getAllFriends();
         return new ResponseEntity<>(friends, HttpStatus.OK);
@@ -33,6 +34,7 @@ public class FriendController {
     @Operation(summary = "Create a new friend", description = "Register a new friend in the Secret Santa system using the provided data.")
     @ApiResponse(responseCode = "201", description = "Successfully created a new friend.")
     @ApiResponse(responseCode = "409", description = "A friend with the provided email is already registered.")
+    @ApiResponse(responseCode = "500", description = "Internal server error.")
     public ResponseEntity<Friend> createFriend(@RequestBody FriendDTO friend) {
         Friend newFriend = friendService.createFriend(friend);
         return new ResponseEntity<>(newFriend, HttpStatus.CREATED);
@@ -42,6 +44,7 @@ public class FriendController {
     @Operation(summary = "Create multiple friends", description = "Registers multiple friends in the Secret Santa system using the provided data in a single request.")
     @ApiResponse(responseCode = "201", description = "Successfully created all friends.")
     @ApiResponse(responseCode = "409", description = "A friend with the provided email is already registered.")
+    @ApiResponse(responseCode = "500", description = "Internal server error.")
     public ResponseEntity<List<FriendDTO>> createFriends(@RequestBody List<FriendDTO> friends) {
         for (FriendDTO friend: friends) {
             friendService.createFriend(friend);
