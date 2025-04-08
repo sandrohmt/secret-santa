@@ -24,7 +24,7 @@ public class FriendController {
     @GetMapping
     @Operation(summary = "List all friends", description = "Returns a list of all friends registered in the Secret Santa system.")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of friends.")
-    @ApiResponse(responseCode = "500", description = "Unexpected server error while list all friends.")
+    @ApiResponse(responseCode = "500", description = "Unexpected server error while listing all friends.")
     public ResponseEntity<List<Friend>> getAllFriends() {
         List<Friend> friends = friendService.getAllFriends();
         return new ResponseEntity<>(friends, HttpStatus.OK);
