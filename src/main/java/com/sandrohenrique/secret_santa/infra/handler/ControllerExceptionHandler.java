@@ -55,15 +55,13 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ExceptionDTO> handleBadCredentialsException(BadCredentialsException exception) {
-        ExceptionDTO response = new ExceptionDTO(exception.getMessage(), "403");
+        ExceptionDTO response = new ExceptionDTO(exception.getMessage(), "401");
         return ResponseEntity.badRequest().body(response);
     }
-
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionDTO> handleGeneralException(Exception exception) {
         ExceptionDTO response = new ExceptionDTO("Erro interno no servidor", "500");
         return ResponseEntity.internalServerError().body(response);
     }
-
 }

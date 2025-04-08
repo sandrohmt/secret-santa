@@ -5,6 +5,9 @@ import com.sandrohenrique.secret_santa.domain.user.User;
 import com.sandrohenrique.secret_santa.dtos.LoginRequestDTO;
 import com.sandrohenrique.secret_santa.dtos.LoginResponseDTO;
 import com.sandrohenrique.secret_santa.repositories.UserRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,19 +26,24 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Authentication", description = "Endpoint for handling user authentication and JWT token generation.")
+
 public class TokenController {
 
     private final JwtEncoder jwtEncoder;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-
     @PostMapping("login")
+    @Operation(summary = "Authenticate user and generate JWT token", description =  "Authenticates a user using login credentials and returns a JWT token to be used in protected requests.")
+    @ApiResponse(responseCode = "200", description = "Login successful. JWT token returned.")
+    @ApiResponse(responseCode = "401", description = "Invalid login credentials.")
+    @ApiResponse(responseCode = "500", description = "Unexpected server error while authenticating")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequest) {
         Optional<User> user = userRepository.findByLogin(loginRequest.login());
 
         if (user.isEmpty() || !user.get().isLoginCorrect(loginRequest, bCryptPasswordEncoder)) {
-            throw new BadCredentialsException("user or password is invalid!");
+            throw new BadCredentialsException("Invalid login or password!");
         }
 
         var now = Instant.now();
@@ -58,5 +66,4 @@ public class TokenController {
 
         return ResponseEntity.ok(new LoginResponseDTO(jwtValue, expiresIn));
     }
-
 }
