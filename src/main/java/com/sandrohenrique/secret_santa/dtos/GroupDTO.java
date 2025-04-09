@@ -21,6 +21,6 @@ public record GroupDTO(
         @Schema(description = "Maximum amount allowed for gift spending", example = "200.0")
         Float spendingCap,
 
-        @Schema(description = "List of friend Ids participating in the group", example = "[1L, 2L, 3L]")
+        @Schema(description = "List of friend Ids participating in the group", example = "[1, 2, 3]")
         Set<Long> friendIds) {
 }
