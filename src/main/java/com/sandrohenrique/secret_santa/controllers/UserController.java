@@ -3,6 +3,7 @@ package com.sandrohenrique.secret_santa.controllers;
 import com.sandrohenrique.secret_santa.domain.user.Role;
 import com.sandrohenrique.secret_santa.domain.user.User;
 import com.sandrohenrique.secret_santa.dtos.CreateUserDTO;
+import com.sandrohenrique.secret_santa.exceptions.EntityNotFoundException;
 import com.sandrohenrique.secret_santa.repositories.RoleRepository;
 import com.sandrohenrique.secret_santa.repositories.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,7 +43,8 @@ public class UserController {
     @ApiResponse(responseCode = "422", description = "User is already created.")
     @ApiResponse(responseCode = "500", description = "Unexpected server error while creating the new user.")
     public ResponseEntity<Void> createUser(@RequestBody  CreateUserDTO data) {
-        Role userRole = roleRepository.findByName(Role.Values.USER.name());
+        Role userRole = roleRepository.findByName(Role.Values.USER.name())
+                .orElseThrow(() -> new EntityNotFoundException("Role USER não encontrada"));;
 
         Optional<User> userFromDB = userRepository.findByLogin(data.login());
         if (userFromDB.isPresent()) {

@@ -8,9 +8,11 @@ import com.sandrohenrique.secret_santa.dtos.GroupDTO;
 import com.sandrohenrique.secret_santa.dtos.GroupWithFriendsDTO;
 import com.sandrohenrique.secret_santa.repositories.FriendRepository;
 import com.sandrohenrique.secret_santa.repositories.GroupRepository;
+import com.sandrohenrique.secret_santa.repositories.RoleRepository;
 import com.sandrohenrique.secret_santa.repositories.UserRepository;
 import com.sandrohenrique.secret_santa.services.GroupService;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDate;
@@ -37,7 +40,7 @@ import static org.mockito.Mockito.*;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureTestDatabase
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class GroupControllerIT {
 
@@ -49,6 +52,49 @@ class GroupControllerIT {
 
     @Autowired
     GroupRepository groupRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
+
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @BeforeEach
+    void setUp() {
+
+        Role adminRole = roleRepository.findByName("ADMIN")
+                .orElseGet(() -> roleRepository.save(new Role(1L, "ADMIN")));
+
+        userRepository.findByLogin("ADMIN").ifPresentOrElse(
+                user -> {},
+                () -> {
+                    User admin = new User();
+                    admin.setLogin("admin");
+                    admin.setPassword(bCryptPasswordEncoder.encode("1234"));
+                    admin.setRoles(Set.of(adminRole));
+                    userRepository.save(admin);
+                }
+        );
+    }
+
+    private String getAdminToken() {
+        String authUrl = "http://localhost:" + port + "/auth/login";
+
+        User authRequest = new User();
+        authRequest.setLogin("ADMIN");
+        authRequest.setPassword("1234");
+
+        ResponseEntity<String> response = testRestTemplate.postForEntity(
+                authUrl,
+                authRequest,
+                String.class
+        );
+
+        return response.getBody();
+    }
 
     @Test
     @DisplayName("findGroupById returns a Group with status 200 when successful")
@@ -69,32 +115,4 @@ class GroupControllerIT {
         Assertions.assertNotNull(response.getBody());
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
-
-//    @Test
-//    @DisplayName("createGroup return Group with status 201 when successful")
-//    void createGroup_ReturnGroupWithStatus201_WhenSuccessful() {
-//        userRepository.save(ADMIN);
-//
-//        Friend friend1 = new Friend(1L, "Maria", "Silva", "mariasilva@gmail.com", List.of("Playstation 5", "Celular"), 2L);
-//        Friend friend2 = new Friend(2L, "José", "Souza", "josesouza@gmail.com", List.of("Tablet", "Piano"), 1L);
-//        friendRepository.save(friend1);
-//        friendRepository.save(friend2);
-//        Set<Long> friendIds = Set.of(1L, 2L);
-//
-//        LocalDate eventDate = LocalDate.of(2024, 12, 20);
-//        GroupDTO groupDTO = new GroupDTO("Natal em família", "Rua das Flores, 123 - Salão de Festas", eventDate, 100F, friendIds);
-//        Group expectedGroup = new Group(groupDTO);
-//
-//        when(groupService.createGroup(groupDTO)).thenReturn(expectedGroup);
-//
-//        ResponseEntity<GroupWithFriendsDTO> response = testRestTemplateRoleAdmin.postForEntity("/groups/createGroup", groupDTO, GroupWithFriendsDTO.class);
-//
-//        Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
-//        Assertions.assertNotNull(response);
-//        Assertions.assertNotNull(response.getBody());
-//        Assertions.assertEquals(expectedGroup, response.getBody());
-//
-//        verify(groupService, times(1)).createGroup(groupDTO);
-//    }
-//
 }

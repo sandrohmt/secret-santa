@@ -2,6 +2,7 @@ package com.sandrohenrique.secret_santa.config;
 
 import com.sandrohenrique.secret_santa.domain.user.Role;
 import com.sandrohenrique.secret_santa.domain.user.User;
+import com.sandrohenrique.secret_santa.exceptions.EntityNotFoundException;
 import com.sandrohenrique.secret_santa.repositories.RoleRepository;
 import com.sandrohenrique.secret_santa.repositories.UserRepository;
 import jakarta.transaction.Transactional;
@@ -25,7 +26,8 @@ public class AdminUserConfig implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-        var roleAdmin = roleRepository.findByName(Role.Values.ADMIN.name());
+        var roleAdmin = roleRepository.findByName(Role.Values.ADMIN.name())
+                .orElseThrow(() -> new EntityNotFoundException("Role ADMIN nao encontrada!"));
 
         var userAdmin = userRepository.findByLogin("ADMIN");
 
